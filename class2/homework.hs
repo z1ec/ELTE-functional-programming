@@ -48,7 +48,7 @@ sumMultiples k n
 -- -- 4. The biggest digit of a non-negative number.
 maxDigit :: Int -> Int
 maxDigit n
-    | n <= 10 = n
+    | n < 10 = n
     | otherwise = max(n `mod` 10) (maxDigit(n `div` 10))
 -- main = print (maxDigit 38291)  -- 9
 -- main = print (maxDigit 1111)   -- 1
@@ -113,7 +113,7 @@ multipleOf3Digits x y = count1 (x + y)
 -- --    First write sumDivisors (ALL divisors, including n), then use it in isPerfect.
 -- --    Hint: look at countDivisors from the class demo.
 sumDivisors :: Int -> Int
-sumDivisors n = sumDivisorsHelp n n - n - 1
+sumDivisors n = sumDivisorsHelp n n - n
 
 sumDivisorsHelp :: Int -> Int -> Int
 sumDivisorsHelp 1 _ = 1
@@ -123,7 +123,7 @@ sumDivisorsHelp d n = (if n `mod` d == 0 then d else 0) + sumDivisorsHelp (d - 1
 -- -- main = print (sumDivisors 7)   -- 8
 
 isPerfect :: Int -> Bool
-isPerfect n = if sumDivisors n <= n then True else False
+isPerfect n = if sumDivisors n == n then True else False
 -- -- main = print (isPerfect 6)   -- True
 -- -- main = print (isPerfect 28)  -- True
 -- -- main = print (isPerfect 12)  -- False
