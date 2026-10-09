@@ -18,6 +18,13 @@
 countRises :: [Int] -> Int
 countRises xs = length [ b | (a, b) <- zip xs (drop 1 xs), b > a ]
 
+
+
+
+countRises1 :: [Int] -> Int
+countRises xs = lenght [x | x <- xs, head xs > x]
+
+
 -- main = print (countRises [1,3,2,5,6])  -- 3
 -- main = print (countRises [1,2,3,4])    -- 3
 -- main = print (countRises [5,4,3])      -- 0
