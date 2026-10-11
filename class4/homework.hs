@@ -41,7 +41,10 @@ sumTuples ps = (sum [a | (a, _) <- ps], sum [b | (_, b) <- ps])
 
 -- A5. Look up the grade of a student in a (name, grade) table. Return -1 if the name is not there.
 lookupGrade :: String -> [(String, Int)] -> Int
-lookupGrade name table = undefined
+lookupGrade name table = firstOrMinus1 [g | (n, g) <- table, n == name]
+    where
+        firstOrMinus1 [] = -1
+        firstOrMinus1 (g:_) = g
 -- main = print (lookupGrade "Bob" [("Anna",5),("Bob",3)])  -- 3
 -- main = print (lookupGrade "Zoe" [("Anna",5)])            -- -1
 
@@ -51,92 +54,106 @@ lookupGrade name table = undefined
 
 -- B1. The multiples of k from k up to n.
 multiplesOf :: Int -> Int -> [Int]
-multiplesOf k n = undefined
+multiplesOf k n = [x | x <- [k..n], x `mod` k == 0]
 -- main = print (multiplesOf 3 10)  -- [3,6,9]
 -- main = print (multiplesOf 5 4)   -- []
 
 -- B2. Remove every occurrence of a character from a text.
 removeChar :: Char -> String -> String
-removeChar ch s = undefined
+removeChar ch s = [c | c <- s, c /= ch]
 -- main = print (removeChar 'l' "hello world")  -- "heo word"
 
 -- B3. Keep only the digits of a text. (isDigit is imported from Data.Char.)
 onlyDigits :: String -> String
-onlyDigits s = undefined
+onlyDigits s = [c | c <- s, isDigit c]
 -- main = print (onlyDigits "tel: +36 1 234-5678")  -- "3612345678"
 
 -- B4. Write every word in capital letters.
 --     Hint: a comprehension INSIDE a comprehension. The inner one shouts one word.
 capitalizeAll :: [String] -> [String]
-capitalizeAll ws = undefined
+capitalizeAll ws = [[toUpper c | c <- w] | w <- ws]
 -- main = print (capitalizeAll ["hello","big","world"])  -- ["HELLO","BIG","WORLD"]
 
 -- B5. The multiplication table from 1 to n, as a list of rows.
 multTable :: Int -> [[Int]]
-multTable n = undefined
+multTable n = [[a * b | b <- [1..n]] | a <- [1..n]]
 -- main = print (multTable 3)  -- [[1,2,3],[2,4,6],[3,6,9]]
 
 -- B6. All quarter hours of a day as (hour, minute) pairs: (0,0), (0,15), (0,30), (0,45), (1,0), ...
 quarters :: [(Int, Int)]
-quarters = undefined
+quarters = [(h, m) | h <- [0..23], m <- [0, 15, 30, 45]]
 -- main = print (take 5 quarters)  -- [(0,0),(0,15),(0,30),(0,45),(1,0)]
 -- main = print (length quarters)  -- 96
 
 -- B7. The positions (starting from 0) where x occurs in the list.
 positionsOf :: Int -> [Int] -> [Int]
-positionsOf x xs = undefined
+positionsOf x xs = [i | (i, y) <- zip [0 .. length xs - 1] xs, y == x]
+-- zip [0..] xs would work too, no need for length
 -- main = print (positionsOf 3 [3,1,3,3,2])  -- [0,2,3]
 -- main = print (positionsOf 9 [1,2])        -- []
 
 -- B8. Is n a prime? Then: all primes up to n.
 isPrime :: Int -> Bool
-isPrime n = undefined
+isPrime n = n > 1 && length [d | d <- [1..n], n `mod` d == 0] == 2
 -- main = print (isPrime 7)  -- True
 -- main = print (isPrime 1)  -- False
 
 primesUpTo :: Int -> [Int]
-primesUpTo n = undefined
+primesUpTo n = [p | p <- [2..n], isPrime p]
 -- main = print (primesUpTo 30)  -- [2,3,5,7,11,13,17,19,23,29]
 
 -- B9. The perfect numbers up to n (a number equal to the sum of its divisors smaller than itself).
 perfectNumbers :: Int -> [Int]
-perfectNumbers n = undefined
+perfectNumbers n = [x | x <- [1..n], sumSmallerDivisors x == x]
+
+sumSmallerDivisors :: Int -> Int
+sumSmallerDivisors x = sum [d | d <- [1 .. x - 1], x `mod` d == 0]
 -- main = print (perfectNumbers 500)  -- [6,28,496]
 
 -- B10. The "staircase" list: 1 once, 2 twice, 3 three times, ..., n n times.
 --      Hint: two generators. The second one only decides HOW MANY times.
 staircase :: Int -> [Int]
-staircase n = undefined
+staircase n = [x | x <- [1..n], _ <- [1..x]]
 -- main = print (staircase 4)  -- [1,2,2,3,3,3,4,4,4,4]
 
 -- B11. A list of n Booleans alternating False, True, False, True, ...
 alternating :: Int -> [Bool]
-alternating n = undefined
+alternating n = [i `mod` 2 == 0 | i <- [1..n]]
 -- main = print (alternating 5)  -- [False,True,False,True,False]
 
 -- B12. ★ For every word: (number of vowels, number of consonants). Ignore everything that is not a letter.
 vowelsConsonants :: [String] -> [(Int, Int)]
-vowelsConsonants ws = undefined
+vowelsConsonants ws = [(length [c | c <- w, isVowel c], length [c | c <- w, isAlpha c, not (isVowel c)]) | w <- ws]
+
+isVowel :: Char -> Bool
+isVowel c = c `elem` "aeiouAEIOU"
 -- main = print (vowelsConsonants ["Harry","ooo","pc","Web"])  -- [(1,4),(3,0),(0,2),(1,2)]
 -- main = print (vowelsConsonants ["12345","he110","W0r1D"])   -- [(0,0),(1,1),(0,3)]
 
 -- B13. ★ Capitalize the first letter of every word in a sentence.
 --      Hint: words / unwords, and a small helper for one word.
 capitalizeWords :: String -> String
-capitalizeWords s = undefined
+capitalizeWords s = unwords [capitalize w | w <- words s]
+
+capitalize :: String -> String
+capitalize [] = []
+capitalize (c:cs) = toUpper c : cs
 -- main = print (capitalizeWords "hello big world")  -- "Hello Big World"
 
 -- B14. ★★ All (month, day) pairs of a 365-day year:
 --      January 31, February 28, March 31, April 30, May 31, June 30,
 --      July 31, August 31, September 30, October 31, November 30, December 31.
 monthDays :: [(Int, Int)]
-monthDays = undefined
+monthDays = [(m, d) | (m, len) <- zip [1..12] monthLengths, d <- [1..len]]
+
+monthLengths :: [Int]
+monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 -- main = print (length monthDays)  -- 365
 -- main = print (monthDays !! 59)   -- (3,1)
 -- main = print (last monthDays)    -- (12,31)
 
 -- B15. ★★ Goldbach: all ways to write n as the sum of two primes p <= q.
 goldbach :: Int -> [(Int, Int)]
-goldbach n = undefined
+goldbach n = [(p, q) | p <- primesUpTo n, q <- primesUpTo n, p <= q, p + q == n]
 -- main = print (goldbach 10)  -- [(3,7),(5,5)]
 -- main = print (goldbach 28)  -- [(5,23),(11,17)]
