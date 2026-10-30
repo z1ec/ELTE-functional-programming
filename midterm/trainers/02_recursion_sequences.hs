@@ -73,7 +73,9 @@
 --
 -- A1. Факториал рекурсией.
 factorial :: Int -> Int
-factorial = undefined
+factorial number
+    | number == 0 = 1
+    | otherwise = number * factorial (number - 1)
 -- main = print (factorial 5)  -- 120
 -- main = print (factorial 0)  -- 1
 
@@ -83,7 +85,10 @@ factorial = undefined
 --
 -- A2. Сумма 1 + 2 + ... + n рекурсией (без sum).
 sumTo :: Int -> Int
-sumTo = undefined
+sumTo n
+    | n == 0 = 0
+    | n == 1 = 1
+    | otherwise = n + sumTo (n - 1)
 -- main = print (sumTo 10)  -- 55
 -- main = print (sumTo 0)  -- 0
 
@@ -95,7 +100,10 @@ sumTo = undefined
 --
 -- A3. Степень a^n рекурсией (без ^).
 power :: Int -> Int -> Int
-power = undefined
+power n m
+    | m == 0 = 1
+    | m == 1 = n
+    | otherwise = n * power n (m - 1)
 -- main = print (power 2 10)  -- 1024
 -- main = print (power 5 0)  -- 1
 
@@ -109,7 +117,7 @@ power = undefined
 --
 -- A4. Все чётные числа от 1 до n — через range с шагом.
 evensUpTo :: Int -> [Int]
-evensUpTo = undefined
+evensUpTo n = [x | x <- [1..n], even x]
 -- main = print (evensUpTo 10)  -- [2,4,6,8,10]
 -- main = print (evensUpTo 1)  -- []
 
@@ -121,7 +129,7 @@ evensUpTo = undefined
 --
 -- A5. Обратный отсчёт n, n-1, ..., 1.
 countdown :: Int -> [Int]
-countdown = undefined
+countdown n = [x | x <- [n,(n-1)..1]]
 -- main = print (countdown 5)  -- [5,4,3,2,1]
 -- main = print (countdown 0)  -- []
 
@@ -133,7 +141,7 @@ countdown = undefined
 --
 -- A6. Квадраты чисел от 1 до n — list comprehension.
 squaresUpTo :: Int -> [Int]
-squaresUpTo = undefined
+squaresUpTo n = [ x ^ 2 | x <- [1..n]]
 -- main = print (squaresUpTo 5)  -- [1,4,9,16,25]
 
 ------------------------------------------------------------------------------
@@ -150,7 +158,10 @@ squaresUpTo = undefined
 --
 -- B1. n-е число Фибоначчи (fib 0 = 0, fib 1 = 1) — обычной рекурсией.
 fib :: Int -> Int
-fib = undefined
+fib num
+    | num == 0 = 0
+    | num == 1 = 1
+    | otherwise = fib (num - 1) + fib (num - 2)
 -- main = print (fib 10)  -- 55
 -- main = print (fib 1)  -- 1
 
@@ -169,7 +180,9 @@ fib = undefined
 --
 -- B2. Первые n чисел Фибоначчи — БЫСТРО, через iterate по парам.
 fibs :: Int -> [Int]
-fibs = undefined
+fibs n = take n (map fst (iterate (\(a, b) -> (b, a+b)) (0, 1)))
+
+
 -- main = print (fibs 8)  -- [0,1,1,2,3,5,8,13]
 -- main = print (fibs 0)  -- []
 
@@ -186,7 +199,11 @@ fibs = undefined
 -- B3. Числа Пелля: P(0) = 0, P(1) = 1, P(n) = 2 * P(n-1) + P(n-2).
 -- Для отрицательного n — error "invalid argument".
 pell :: Int -> Int
-pell = undefined
+pell n
+    | n < 0 = error "invalid argument"
+    | n == 0 = 0
+    | n == 1 = 1
+    | otherwise = 2 * (pell (n-1)) + (pell (n-2)) 
 -- main = print (pell 5)  -- 29
 -- main = print (pell 0)  -- 0
 -- main = print (pell (-1))  -- error: invalid argument
@@ -200,7 +217,7 @@ pell = undefined
 --
 -- B4. Все степени двойки, не превосходящие n (iterate + takeWhile).
 powersOf2Upto :: Int -> [Int]
-powersOf2Upto = undefined
+powersOf2Upto n = takeWhile (<= n) (iterate (* 2) 1)
 -- main = print (powersOf2Upto 100)  -- [1,2,4,8,16,32,64]
 -- main = print (powersOf2Upto 64)  -- [1,2,4,8,16,32,64]
 
@@ -212,7 +229,10 @@ powersOf2Upto = undefined
 --
 -- B5. Последовательность Коллатца: чётное -> n/2, нечётное -> 3n+1, стоп на 1.
 collatz :: Int -> [Int]
-collatz = undefined
+collatz n
+    | n == 1 = [1]
+    | even n = n : collatz(n `div` 2)
+    | otherwise = n : collatz(3*n+1)
 -- main = print (collatz 6)  -- [6,3,10,5,16,8,4,2,1]
 -- main = print (collatz 1)  -- [1]
 
@@ -225,7 +245,7 @@ collatz = undefined
 --
 -- B6. Склеить числа в строку, после КАЖДОГО числа пробел.
 joinNumbers :: [Int] -> String
-joinNumbers = undefined
+joinNumbers n = concatMap (\x -> show x ++ " ") n
 -- main = print (joinNumbers [1,2,3])  -- "1 2 3 "
 -- main = print (joinNumbers [])  -- ""
 
@@ -237,7 +257,7 @@ joinNumbers = undefined
 --
 -- B7. Сумма квадратов нечётных чисел от 1 до n.
 sumOddSquares :: Int -> Int
-sumOddSquares = undefined
+sumOddSquares n = sum [ x ^ 2 | x <- [1..n], odd x ]
 -- main = print (sumOddSquares 5)  -- 35
 -- main = print (sumOddSquares 0)  -- 0
 
@@ -248,7 +268,9 @@ sumOddSquares = undefined
 --
 -- B8. Числа от start до end (включительно) с шагом step. start > end -> [].
 rangeStep :: Int -> Int -> Int -> [Int]
-rangeStep = undefined
+rangeStep start end step
+    | start > end = []
+    | otherwise = [start, (start + step) .. end]
 -- main = print (rangeStep 1 10 3)  -- [1,4,7,10]
 -- main = print (rangeStep 5 1 2)  -- []
 
@@ -266,7 +288,11 @@ rangeStep = undefined
 -- a(n) = a(n − 1) + (2 * a(n − 2)) for n >= 2, with a(0) = 0, a(1) = 1.
 -- Check if n is valid.
 jacobsthal :: Int -> Int
-jacobsthal = undefined
+jacobsthal n
+    | n < 0 = error "invalid argument"
+    | n == 0 = 0
+    | n == 1 = 1
+    | otherwise = jacobsthal (n - 1) + 2 * jacobsthal (n - 2)
 -- main = print (jacobsthal 4)  -- 5
 -- main = print (jacobsthal 16)  -- 21845
 -- main = print (jacobsthal 0)  -- 0
@@ -283,7 +309,7 @@ jacobsthal = undefined
 -- and `n` as the number of terms in the arithmetic sequence,
 -- and returns the arithmetic sequence.  a=1, d=2, n=5 -> [1,3,5,7,9]
 arithmeticSequence :: Int -> Int -> Int -> [Int]
-arithmeticSequence = undefined
+arithmeticSequence a d n = take n [a, a+d ..]
 -- main = print (arithmeticSequence 1 2 5)  -- [1,3,5,7,9]
 -- main = print (arithmeticSequence 2 3 4)  -- [2,5,8,11]
 -- main = print (arithmeticSequence 0 (-10) 20)  -- [0,-10,-20,-30,-40,-50,-60,-70,-80,-90,-100,-110,-120,-130,-140,-150,-160,-170,-180,-190]
@@ -302,7 +328,10 @@ arithmeticSequence = undefined
 -- in [start..end]. If value is False, return the cubes of odd integers.
 -- Return an empty list if start is greater than end.
 generateFiltered :: Int -> Int -> Bool -> [Int]
-generateFiltered = undefined
+generateFiltered a b bool
+    | a > b = []
+    | bool == False = [ x^3 | x <- [a..b], odd x]
+    | otherwise = [ x^2 | x <- [a..b], even x]
 -- main = print (generateFiltered 1 10 True)  -- [4,16,36,64,100]
 -- main = print (generateFiltered 1 10 False)  -- [1,27,125,343,729]
 -- main = print (generateFiltered (-4) 4 True)  -- [16,4,0,4,16]
@@ -320,7 +349,7 @@ generateFiltered = undefined
 -- 5 -> 2^2 + 4^2 - 1^2 - 3^2 - 5^2 = -15
 -- (В описании sample написано "10" и "220" — это опечатки, верные ответы в тестах.)
 sumAlternatingSquares :: Int -> Int
-sumAlternatingSquares = undefined
+sumAlternatingSquares n = (sum [x^2 | x <- [1..n], even x]) - (sum [x^2 | x <- [1..n], odd x])
 -- main = print (sumAlternatingSquares 5)  -- -15
 -- main = print (sumAlternatingSquares 10)  -- 55
 -- main = print (sumAlternatingSquares 7)  -- -28
@@ -336,7 +365,7 @@ sumAlternatingSquares = undefined
 -- increment repeatedly until the next number would be greater than the ending number.
 -- start = 1, end = 10, increment = 2  ->  "1 3 5 7 9 "
 generateSumString :: Int -> Int -> Int -> String
-generateSumString = undefined
+generateSumString s e i = concatMap (\x -> show x ++ " ") [s, (s+i) .. e]
 -- main = print (generateSumString 1 10 2)  -- "1 3 5 7 9 "
 -- main = print (generateSumString 0 15 5)  -- "0 5 10 15 "
 -- main = print (generateSumString 10 10 2)  -- "10 "
@@ -349,7 +378,7 @@ generateSumString = undefined
 -- Same, but MULTIPLY by step repeatedly until the next number would be
 -- greater than the ending number.  start = 1, end = 10, step = 2 -> "1 2 4 8 "
 generateMulString :: Int -> Int -> Int -> String
-generateMulString = undefined
+generateMulString s e i = concatMap (\x -> show x ++ " ") (takeWhile (<= e) (iterate (*i) s))
 -- main = print (generateMulString 2 12 2)  -- "2 4 8 "
 -- main = print (generateMulString 1 10 2)  -- "1 2 4 8 "
 -- main = print (generateMulString 1 15 5)  -- "1 5 "
@@ -368,12 +397,12 @@ generateMulString = undefined
 -- [3,4] -> [4,7]:  up to 3 is 0+1+1+2 = 4,  up to 4 is 0+1+1+2+3 = 7
 -- (fib — из B1. Для t2 [20,30] обычный fib медленный — используй fibs из B2.)
 fibSum :: Int -> Int
-fibSum = undefined
+fibSum n = sum (fibs (n+1))
 -- main = print (fibSum 3)  -- 4
 -- main = print (fibSum 0)  -- 0
 
 t2 :: [Int] -> [Int]
-t2 = undefined
+t2 xs = map fibSum xs
 -- main = print (t2 [3, 4])  -- [4,7]
 -- main = print (t2 [6, 8])  -- [20,54]
 -- main = print (t2 [5,6,7,0])  -- [12,20,33,0]
