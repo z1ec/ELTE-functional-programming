@@ -61,7 +61,7 @@ import Data.List (nub, tails)
 --
 -- A1. Все пары (x, y): x из первого списка, y из второго.
 allPairs :: [Int] -> [Int] -> [(Int, Int)]
-allPairs = undefined
+allPairs xs ys = [(x, y) | x <- xs, y <- ys]
 -- main = print (allPairs [1,2] [3,4])  -- [(1,3),(1,4),(2,3),(2,4)]
 -- main = print (allPairs [] [3,4])  -- []
 
@@ -72,7 +72,7 @@ allPairs = undefined
 --
 -- A2. Все пары (a, b), 1 <= a <= b, a + b == n.
 pairsSumTo :: Int -> [(Int, Int)]
-pairsSumTo = undefined
+pairsSumTo n = [(x,y) | x <- [1..(div n 2 + 1)], y <- [x..n], x + y == n]
 -- main = print (pairsSumTo 6)  -- [(1,5),(2,4),(3,3)]
 -- main = print (pairsSumTo 1)  -- []
 
@@ -83,7 +83,7 @@ pairsSumTo = undefined
 --
 -- A3. Пары (x, y) из элементов списка, где x < y (по значению).
 orderedPairs :: [Int] -> [(Int, Int)]
-orderedPairs = undefined
+orderedPairs xs = [ (x,y) | x<-xs, y<-xs, x<y, x /= y]
 -- main = print (orderedPairs [3,1,2])  -- [(1,3),(1,2),(2,3)]
 
 -- >>> ТЕОРИЯ: tails и образец в генераторе
@@ -97,7 +97,7 @@ orderedPairs = undefined
 --
 -- A4. Каждый элемент с каждым ПОСЛЕДУЮЩИМ (по позиции).
 laterPairs :: [a] -> [(a, a)]
-laterPairs = undefined
+laterPairs xs = [(x, y) | (x:rest) <- tails xs, y <- rest]
 -- main = print (laterPairs [1,2,3])  -- [(1,2),(1,3),(2,3)]
 -- main = print (laterPairs "ab")  -- [('a','b')]
 
@@ -109,7 +109,7 @@ laterPairs = undefined
 --
 -- A5. Таблица умножения n x n в виде троек (a, b, a*b), a <= b.
 multTable :: Int -> [(Int, Int, Int)]
-multTable = undefined
+multTable n = [(a,b,a*b) | a<-[1..n], b<-[a..n]]
 -- main = print (multTable 2)  -- [(1,1,1),(1,2,2),(2,2,4)]
 
 ------------------------------------------------------------------------------
@@ -258,7 +258,6 @@ f4 = undefined
 -- main = print (f4 10)  -- [(3,4,5)]
 -- main = print (f4 30)  -- [(3,4,5),(5,12,13),(8,15,17),(7,24,25),(20,21,29)]
 -- main = print (f4 1)  -- []
-
 -- Даны в midterm1 #12 и midterm2 #12:
 -- (дано)
 birdsName :: Char -> String

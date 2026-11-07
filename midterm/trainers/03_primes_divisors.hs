@@ -55,7 +55,7 @@
 --
 -- A1. Все делители n (от 1 до n).
 divisors :: Int -> [Int]
-divisors = undefined
+divisors n = [ x | x <- [1..n], n `mod` x == 0 ]
 -- main = print (divisors 12)  -- [1,2,3,4,6,12]
 -- main = print (divisors 7)  -- [1,7]
 
@@ -64,7 +64,7 @@ divisors = undefined
 --
 -- A2. Количество делителей.
 countDivisors :: Int -> Int
-countDivisors = undefined
+countDivisors x  = length (divisors x)
 -- main = print (countDivisors 12)  -- 6
 -- main = print (countDivisors 1)  -- 1
 
@@ -73,7 +73,7 @@ countDivisors = undefined
 --
 -- A3. Собственные делители (все, кроме самого n).
 properDivisors :: Int -> [Int]
-properDivisors = undefined
+properDivisors n = [ x | x <- [1..(n-1)], n `mod` x == 0 ]
 -- main = print (properDivisors 12)  -- [1,2,3,4,6]
 -- main = print (properDivisors 1)  -- []
 
@@ -92,7 +92,7 @@ properDivisors = undefined
 -- Write a function, that checks if a given integer is prime.
 -- A prime number is only divisible by 1 and itself.
 isPrime :: Int -> Bool
-isPrime = undefined
+isPrime n = [ x | x <- [1..n], n `mod` x == 0 ] == [1, n]
 -- main = print (isPrime 5)  -- True
 -- main = print (isPrime 4)  -- False
 -- main = print (isPrime 13)  -- True
@@ -107,7 +107,7 @@ isPrime = undefined
 --
 -- A5. Общие делители двух чисел.
 commonDivisors :: Int -> Int -> [Int]
-commonDivisors = undefined
+commonDivisors a b = [x | x <- [1..(a+b)], ((a `mod` x == 0) && (b `mod` x == 0))]
 -- main = print (commonDivisors 12 18)  -- [1,2,3,6]
 -- main = print (commonDivisors 7 10)  -- [1]
 
@@ -122,7 +122,10 @@ commonDivisors = undefined
 --
 -- B1. Все простые числа от 2 до n.
 primesUpTo :: Int -> [Int]
-primesUpTo = undefined
+primesUpTo n = [x | x <- [2..n], myPrime x]
+
+myPrime :: Int -> Bool
+myPrime n = length [ x | x <- [1..n], n `mod` x == 0 ] == 2
 -- main = print (primesUpTo 20)  -- [2,3,5,7,11,13,17,19]
 -- main = print (primesUpTo 1)  -- []
 
@@ -132,7 +135,7 @@ primesUpTo = undefined
 --
 -- B2. Пары простых-близнецов (p, p+2), где p+2 <= n.
 twinPrimes :: Int -> [(Int, Int)]
-twinPrimes = undefined
+twinPrimes n = [ (p, p+2) | p <- [1..n], myPrime p && myPrime (p+2) && (p+2) <= n ]
 -- main = print (twinPrimes 20)  -- [(3,5),(5,7),(11,13),(17,19)]
 -- main = print (twinPrimes 4)  -- []
 
@@ -149,7 +152,12 @@ twinPrimes = undefined
 --
 -- B3. Разложение на простые множители (рекурсия).
 primeFactors :: Int -> [Int]
-primeFactors = undefined
+primeFactors a
+    | primes a == [] = [a]
+    | otherwise = [head (primes a)] ++ primeFactors (a `div` (head (primes a)))
+
+primes :: Int -> [Int]
+primes n = [x | x <- [2..(n-1)], n `mod` x == 0]
 -- main = print (primeFactors 60)  -- [2,2,3,5]
 -- main = print (primeFactors 13)  -- [13]
 
@@ -160,7 +168,7 @@ primeFactors = undefined
 --
 -- B4. Взаимно просты ли два числа (gcd = 1)?
 isCoprime :: Int -> Int -> Bool
-isCoprime = undefined
+isCoprime a b = gcd a b == 1
 -- main = print (isCoprime 8 15)  -- True
 -- main = print (isCoprime 6 9)  -- False
 
@@ -170,7 +178,7 @@ isCoprime = undefined
 --
 -- B5. Избыточные числа до n: сумма собственных делителей БОЛЬШЕ самого числа.
 abundantNumbers :: Int -> [Int]
-abundantNumbers = undefined
+abundantNumbers n = [x | x <- [1..n], sum (properDivisors x) > x]
 -- main = print (abundantNumbers 30)  -- [12,18,20,24,30]
 
 -- >>> ТЕОРИЯ: "первый подходящий" = head от генератора
@@ -179,8 +187,11 @@ abundantNumbers = undefined
 --   Пары (p, n - p): p от 2 до n `div` 2 (чтобы p <= q), оба числа простые.
 --
 -- B6. Гольдбах: первая пара простых (p, q), p <= q, p + q == n (n чётное > 2).
+isPrime1 :: Int -> Bool
+isPrime1 x = x >= 2 && null (primes x)
+
 goldbach :: Int -> (Int, Int)
-goldbach = undefined
+goldbach n = head [ (p, n - p) | p <- [2 .. n `div` 2], isPrime1 p, isPrime1 (n - p) ]
 -- main = print (goldbach 28)  -- (5,23)
 -- main = print (goldbach 10)  -- (3,7)
 
@@ -194,7 +205,7 @@ goldbach = undefined
 --
 -- B7. Сумма простых чисел, стоящих на ЧЁТНЫХ позициях (индексы с 0).
 sumPrimesAtEven :: [Int] -> Int
-sumPrimesAtEven = undefined
+sumPrimesAtEven xs = sum [ x | (i,x) <- zip [0..] xs, even i && isPrime1 x]
 -- main = print (sumPrimesAtEven [2, 3, 5, 7, 9])  -- 7
 -- main = print (sumPrimesAtEven [])  -- 0
 
@@ -210,7 +221,10 @@ sumPrimesAtEven = undefined
 -- A perfect number is equal to the sum of its proper divisors.
 -- (e.g., 6 is perfect because 1 + 2 + 3 = 6).
 perfectNumbers :: Int -> [Int]
-perfectNumbers = undefined
+perfectNumbers n = [ x | x <- [1..n], sum (properDivisors1 x) == x ]
+
+properDivisors1 :: Int -> [Int]
+properDivisors1 n = [x | x <- [1..n-1], n `mod` x == 0]
 -- main = print (perfectNumbers 30)  -- [6,28]
 -- main = print (perfectNumbers 500)  -- [6,28,496]
 
@@ -230,7 +244,7 @@ perfectNumbers = undefined
 -- ВНИМАНИЕ: по тестам видно, что на самом деле ВСЕ ТРИ числа должны быть <= n
 -- (иначе для 20 вышла бы ещё (17,19,23), а для 100 — (97,101,103)).
 primeTriplets :: Int -> [(Int, Int, Int)]
-primeTriplets = undefined
+primeTriplets n = [(p, p + d, p + 6) | p <- [1..(n-6)], d <- [2,4], isPrime p && isPrime (p + d) && isPrime (p + 6)]
 -- main = print (primeTriplets 20)  -- [(5,7,11),(7,11,13),(11,13,17),(13,17,19)]
 -- main = print (primeTriplets 50)  -- [(5,7,11),(7,11,13),(11,13,17),(13,17,19),(17,19,23),(37,41,43),(41,43,47)]
 -- main = print (primeTriplets 100)  -- [(5,7,11),(7,11,13),(11,13,17),(13,17,19),(17,19,23),(37,41,43),(41,43,47),(67,71,73)]
@@ -242,7 +256,7 @@ primeTriplets = undefined
 -- Given a list of integers, return the product of all prime numbers found at odd indices.
 -- [2, 3, 5, 7, 11] -> 21 (only 3 and 7 are at odd indices and prime, 3 * 7 = 21)
 t3 :: [Int] -> Int
-t3 = undefined
+t3 xs = product [ x | (i,x) <- zip [0..] xs, odd i, isPrime x]
 -- main = print (t3 [2, 3, 5, 7, 11])  -- 21
 -- main = print (t3 [2, 3, 5, 7, 11, 13])  -- 273
 -- main = print (t3 [4, 6, 8, 10, 12])  -- 1
