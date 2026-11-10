@@ -122,7 +122,7 @@ multTable n = [(a,b,a*b) | a<-[1..n], b<-[a..n]]
 --
 -- B1. Пары элементов (по позициям i < j), сумма которых равна t.
 pairsWithSum :: [Int] -> Int -> [(Int, Int)]
-pairsWithSum = undefined
+pairsWithSum xs t = [ (x, y) | (x, y) <- laterPairs xs, x + y == t ]
 -- main = print (pairsWithSum [1,2,3,4,5] 6)  -- [(1,5),(2,4)]
 -- main = print (pairsWithSum [1,1] 3)  -- []
 
@@ -134,7 +134,7 @@ pairsWithSum = undefined
 --
 -- B2. Тройки 1 <= a <= b <= c, a + b + c == n.
 triplesSum :: Int -> [(Int, Int, Int)]
-triplesSum = undefined
+triplesSum n = [ (a, b, (n - a - b)) | a <- [1..n], b <- [a..n], (a + b + (n - a - b)) == n, (n - a - b) >= b]
 -- main = print (triplesSum 6)  -- [(1,1,4),(1,2,3),(2,2,2)]
 
 -- >>> ТЕОРИЯ: nub
@@ -146,6 +146,9 @@ triplesSum = undefined
 -- Сначала nub, потом перебор.
 diffPairs :: [Int] -> Int -> [(Int, Int)]
 diffPairs = undefined
+
+-- myLetterPairs :: [Int] -> [(Int, Int)]
+-- myLetterPairs xs = [ (x, y) | x <-  ]
 -- main = print (diffPairs [1,5,3,4,2,5] 2)  -- [(1,3),(3,5),(2,4)]
 
 -- >>> ТЕОРИЯ: перебор с условием-уравнением
