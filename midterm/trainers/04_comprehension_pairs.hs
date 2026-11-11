@@ -145,7 +145,7 @@ triplesSum n = [ (a, b, (n - a - b)) | a <- [1..n], b <- [a..n], (a + b + (n - a
 -- B3. Уникальные пары (x, y) значений списка, где y - x == d.
 -- Сначала nub, потом перебор.
 diffPairs :: [Int] -> Int -> [(Int, Int)]
-diffPairs = undefined
+diffPairs xs d = [ (x, y) | x <- nub xs, y <- nub xs, y - x == d ]
 
 -- myLetterPairs :: [Int] -> [(Int, Int)]
 -- myLetterPairs xs = [ (x, y) | x <-  ]
@@ -156,7 +156,7 @@ diffPairs = undefined
 --
 -- B4. Все пары (a, b), a <= b, a^2 + b^2 == n.
 sumOfTwoSquares :: Int -> [(Int, Int)]
-sumOfTwoSquares = undefined
+sumOfTwoSquares n = [ (x, y) | x <- [0..n], y <- [0..n], x <= y, (x * x) + (y * y) == n ]
 -- main = print (sumOfTwoSquares 50)  -- [(1,7),(5,5)]
 -- main = print (sumOfTwoSquares 3)  -- []
 
@@ -168,7 +168,7 @@ sumOfTwoSquares = undefined
 --
 -- B5. Для каждой СОГЛАСНОЙ буквы строки — пары с каждым числом из списка.
 consonantCodes :: String -> [Int] -> [(Char, Int)]
-consonantCodes = undefined
+consonantCodes s xs = [ (c, i) | c <- s, c `notElem` "aeiou", i <- xs ]
 -- main = print (consonantCodes "abe" [1,2])  -- [('b',1),('b',2)]
 
 -- Дана функция-словарь и список известных кодов:
@@ -180,7 +180,7 @@ colorName 'B' = "Blue"
 colorName _   = error "unknown color"
 
 -- (дано)
-knownColors :: [Char]
+knownColors :: String
 knownColors = "RGB"
 
 -- >>> ТЕОРИЯ: if внутри выражения; данная функция
@@ -193,7 +193,7 @@ knownColors = "RGB"
 -- а для неизвестного символа — (символ, "???"). Вызывать colorName для
 -- неизвестного символа НЕЛЬЗЯ (будет error) — сначала проверь elem.
 describeColors :: String -> [(Char, String)]
-describeColors = undefined
+describeColors s = [ (c, if c `elem` knownColors then colorName c else "???") | c <- s]
 -- main = print (describeColors "RB")  -- [('R',"Red"),('B',"Blue")]
 -- main = print (describeColors "GX")  -- [('G',"Green"),('X',"???")]
 
@@ -214,7 +214,7 @@ describeColors = undefined
 -- (a, b) is considered the same as (b, a) and should only appear once.
 -- Подсказка: перебирай пары по позициям (x раньше y) и ставь делимое первым.
 divisiblePairs :: [Int] -> [(Int, Int)]
-divisiblePairs = undefined
+divisiblePairs xs = [ (a, b) | a<-xs, b<-xs, a `mod` b == 0, a /= b ]
 -- main = print (divisiblePairs [2, 3, 4, 6])  -- [(4,2),(6,2),(6,3)]
 -- main = print (divisiblePairs [10, 5, 2, 1])  -- [(10,5),(10,2),(10,1),(5,1),(2,1)]
 -- main = print (divisiblePairs [12, 3, 4, 6])  -- [(12,3),(12,4),(12,6),(6,3)]
@@ -229,7 +229,11 @@ divisiblePairs = undefined
 -- within the list where the first element is less than n, the second element is
 -- greater than or equal to n, and the sum of the two elements is even.
 findPairs :: [Int] -> Int -> [(Int, Int)]
-findPairs = undefined
+findPairs xs n = [ (x, y) | x <- myNub xs, y <- myNub xs, x < n, y >= n, (x + y) `mod` 2 == 0 ]
+
+myNub :: Eq a => [a] -> [a]
+myNub [] = []
+myNub (x:xs) = x : myNub (filter (/= x) xs)
 -- main = print (findPairs [1, 3, 5, 8, 10, 12, 13, 14, 16, 18] 10)  -- [(1,13),(3,13),(5,13),(8,10),(8,12),(8,14),(8,16),(8,18)]
 -- main = print (findPairs [2, 4, 6, 7, 9, 11, 13, 15 ,16, 17] 9)  -- [(2,16),(4,16),(6,16),(7,9),(7,11),(7,13),(7,15),(7,17)]
 
@@ -245,7 +249,7 @@ findPairs = undefined
 -- (В условии "less than n", но тест f3 30 содержит (18,24,30) — значит <= n.
 --  Порядок в ответе — по c, потом по b: см. теорию.)
 f3 :: Int -> [(Int, Int, Int)]
-f3 = undefined
+f3 n = [ (x,y,z) | z <- [1..n], y <- [1..z], x <- [1..y], x*x + y*y == z*z ]
 -- main = print (f3 7)  -- [(3,4,5)]
 -- main = print (f3 30)  -- [(3,4,5),(6,8,10),(5,12,13),(9,12,15),(8,15,17),(12,16,20),(15,20,25),(7,24,25),(10,24,26),(20,21,29),(18,24,30)]
 -- main = print (f3 1)  -- []
@@ -257,10 +261,17 @@ f3 = undefined
 -- C4. [midterm6 #2]
 -- Same Pythagorean triples, but only co-prime ones (their greatest common divisor is 1).
 f4 :: Int -> [(Int, Int, Int)]
-f4 = undefined
+f4 n = [ (a,b,c) | c <- [1..n], b <- [1..c], a <- [1..b], gcd3 a b c == 1, a*a + b*b == c*c]
+
+gcd3 :: Int -> Int -> Int -> Int
+gcd3 a b c = gcd (gcd a b) c
+
 -- main = print (f4 10)  -- [(3,4,5)]
 -- main = print (f4 30)  -- [(3,4,5),(5,12,13),(8,15,17),(7,24,25),(20,21,29)]
 -- main = print (f4 1)  -- []
+
+
+
 -- Даны в midterm1 #12 и midterm2 #12:
 -- (дано)
 birdsName :: Char -> String
