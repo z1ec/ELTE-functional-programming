@@ -64,7 +64,7 @@ import Data.Char (toUpper, toLower, isDigit, isAlpha, isSpace, digitToInt)
 --
 -- A1. Все буквы в верхний регистр.
 shout :: String -> String
-shout = undefined
+shout s = map toUpper s
 -- main = print (shout "hello")  -- "HELLO"
 
 -- >>> ТЕОРИЯ: elem, toLower
@@ -74,7 +74,7 @@ shout = undefined
 --
 -- A2. Гласная ли буква (a, e, i, o, u), без учёта регистра.
 isVowel :: Char -> Bool
-isVowel = undefined
+isVowel c = (toUpper c) `elem` "AOIUE"
 -- main = print (isVowel 'a')  -- True
 -- main = print (isVowel 'E')  -- True
 -- main = print (isVowel 'x')  -- False
@@ -85,7 +85,7 @@ isVowel = undefined
 --
 -- A3. Удалить все пробелы.
 removeSpaces :: String -> String
-removeSpaces = undefined
+removeSpaces s = filter (/=' ') s
 -- main = print (removeSpaces "a b  c")  -- "abc"
 
 -- >>> ТЕОРИЯ: посчитать = length (filter ...)
@@ -94,7 +94,7 @@ removeSpaces = undefined
 --
 -- A4. Сколько раз символ встречается в строке.
 countChar :: Char -> String -> Int
-countChar = undefined
+countChar c s = length (filter (== c) s)
 -- main = print (countChar 'l' "hello")  -- 2
 -- main = print (countChar 'z' "hello")  -- 0
 
@@ -104,7 +104,7 @@ countChar = undefined
 --
 -- A5. Оставить только цифры.
 onlyDigits :: String -> String
-onlyDigits = undefined
+onlyDigits s = filter (`elem` "1234567890") s
 -- main = print (onlyDigits "a1b22c3")  -- "1223"
 
 -- >>> ТЕОРИЯ: образец (c:rest) для строк, оператор (:)
@@ -118,7 +118,8 @@ onlyDigits = undefined
 --
 -- A6. Первая буква заглавная, остальное без изменений.
 capitalize :: String -> String
-capitalize = undefined
+capitalize "" = ""
+capitalize (c:rest) = (toUpper c) : rest
 -- main = print (capitalize "haskell")  -- "Haskell"
 -- main = print (capitalize "")  -- ""
 
@@ -133,7 +134,7 @@ capitalize = undefined
 --
 -- B1. Заменить каждый символ a на символ b.
 replaceChar :: Char -> Char -> String -> String
-replaceChar = undefined
+replaceChar a b s = map (\c -> if c == a then b else c) s
 -- main = print (replaceChar 'a' 'o' "banana")  -- "bonono"
 
 -- >>> ТЕОРИЯ: words
@@ -143,7 +144,7 @@ replaceChar = undefined
 --
 -- B2. Длины слов.
 wordLengths :: String -> [Int]
-wordLengths = undefined
+wordLengths s = map length (words s)
 -- main = print (wordLengths "I love Haskell")  -- [1,4,7]
 
 -- >>> ТЕОРИЯ: words -> map -> unwords
@@ -153,7 +154,7 @@ wordLengths = undefined
 --
 -- B3. Каждое слово с заглавной буквы.
 capitalizeWords :: String -> String
-capitalizeWords = undefined
+capitalizeWords s = unwords (map (\w -> capitalize w) (words s))
 -- main = print (capitalizeWords "functional programming is fun")  -- "Functional Programming Is Fun"
 
 -- >>> ТЕОРИЯ: B1 + своё условие
@@ -161,7 +162,7 @@ capitalizeWords = undefined
 --
 -- B4. Каждую гласную (любого регистра) заменить на '*'.
 censor :: String -> String
-censor = undefined
+censor s = map (\c -> if (toUpper c) `elem` "AOIUE" then '*' else c ) s
 -- main = print (censor "Hello World")  -- "H*ll* W*rld"
 
 -- >>> ТЕОРИЯ: локальная функция с guards в where
@@ -175,7 +176,7 @@ censor = undefined
 --
 -- B5. Цифру заменить на '#', букву на 'a', остальное не трогать.
 classify :: String -> String
-classify = undefined
+classify s = map (\c -> if (toUpper c) `elem` "QWERTYUIOOPASDFGHJKLZXCVBNM" then 'a' else (if c `elem` "1234567890" then '#' else c)) s
 -- main = print (classify "R2-D2!")  -- "a#-a#!"
 
 -- >>> ТЕОРИЯ: filter по списку строк
@@ -184,7 +185,7 @@ classify = undefined
 --
 -- B6. Оставить только слова, в которых есть символ c.
 wordsContaining :: Char -> [String] -> [String]
-wordsContaining = undefined
+wordsContaining c s = filter (\w -> c `elem` w) s
 -- main = print (wordsContaining 'a' ["cat","dog","bat"])  -- ["cat","bat"]
 
 -- >>> ТЕОРИЯ: цепочка filter -> map -> sum
@@ -193,7 +194,7 @@ wordsContaining = undefined
 --
 -- B7. Сумма всех цифр, встречающихся в строке.
 sumDigitsInString :: String -> Int
-sumDigitsInString = undefined
+sumDigitsInString s = sum (map (digitToInt ) (filter isDigit s))
 -- main = print (sumDigitsInString "a1b2c3")  -- 6
 -- main = print (sumDigitsInString "abc")  -- 0
 
@@ -203,7 +204,7 @@ sumDigitsInString = undefined
 --
 -- B8. Каждое слово + "!" после него, всё склеить (без пробелов).
 exclaimAll :: [String] -> String
-exclaimAll = undefined
+exclaimAll s = concatMap (\w -> w ++ "!") s
 -- main = print (exclaimAll ["hi","yo"])  -- "hi!yo!"
 
 ------------------------------------------------------------------------------
@@ -216,7 +217,9 @@ exclaimAll = undefined
 -- C1. [midterm2 #6]
 -- Write a function that takes a string and changes every vowel to O.
 f1 :: String -> String
-f1 = undefined
+f1 s = map (\x -> if isVowel x then 'O' else x ) s
+    where
+        isVowel c = (toUpper c) `elem` "AOUIE"
 -- main = print (f1 "Apple is my favourite electronics company")  -- "OpplO Os my fOvOOrOtO OlOctrOnOcs cOmpOny"
 -- main = print (f1 "cad!ng luiks se giad")  -- "cOd!ng lOOks sO gOOd"
 
@@ -227,7 +230,7 @@ f1 = undefined
 -- Write a function, that counts the number of vowels (a, e, i, o, u) in a given string.
 -- The function should be case insensitive.
 countVowels :: String -> Int
-countVowels = undefined
+countVowels s = length (filter (\c -> (toUpper c) `elem` "AOUIE") s)
 -- main = print (countVowels "Hello World")  -- 3
 -- main = print (countVowels "Functional")  -- 4
 -- main = print (countVowels "Haskell")  -- 2
@@ -247,7 +250,9 @@ countVowels = undefined
 -- a space should be added after every substring and a "." at the end.
 -- ["Hi", "how", "are", "you"] -> "lO lOl OlO lOO ."
 f5 :: [String] -> String
-f5 = undefined
+f5 s = (concatMap (\c -> help c ++ " ") s) ++ "."
+    where
+        help s = map (\c -> if (toUpper c) `elem` "AOUEI" then 'O' else (if (toUpper c) `elem` "QWRTPSDFGYHJKLMNBVCXZ" then 'l' else c)) s
 -- main = print (f5 ["Hi", "how", "are", "you"])  -- "lO lOl OlO lOO ."
 -- main = print (f5 ["functional", "Programming", "is", "nice", "&", "very", "fun", "$$ :)"])  -- "lOlllOOlOl llOllOllOll Ol lOlO & lOll lOl $$ :) ."
 
@@ -265,7 +270,14 @@ f5 = undefined
 -- If k is neither a vowel nor a digit, omit all strings containing k.
 -- All strings and characters given are in lowercase.
 keeper :: [String] -> Char -> [String]
-keeper = undefined
+keeper s k
+    | s == [] = []
+    | (k `elem` "123456789") = error "Number passed in"
+    | (isVowel k) = filter (\c -> k `elem` c) s
+    | otherwise = filter (\c -> k `notElem` c) s
+        where
+            isVowel c = (toUpper c) `elem` "AEUIO"
+
 -- main = print (keeper ["hello", "world", "!"] 'e')  -- ["hello"]
 -- main = print (keeper [] 'c')  -- []
 -- main = print (keeper ["123321", "great", "arnold", "armstrong"] 'g')  -- ["123321","arnold"]
@@ -282,7 +294,10 @@ keeper = undefined
 -- Even-indexed group comes first, then a space, then the odd-indexed part.
 -- "meirdmt" => "midt erm"   (indices 0246 | 135)
 sortMyString :: String -> String
-sortMyString = undefined
+sortMyString s = evens s ++ " " ++ odds s
+    where 
+        evens s = [ c | (i, c) <- zip [0..] s, even i]
+        odds s = [ c | (i, c) <- zip [0..] s, odd i]
 -- main = print (sortMyString "01234567")  -- "0246 1357"
 -- main = print (sortMyString "caonrsrweecrt!")  -- "correct answer!"
 -- main = print (sortMyString "meirdmt")  -- "midt erm"
