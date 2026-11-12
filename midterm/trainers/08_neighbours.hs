@@ -56,7 +56,7 @@ import Data.List (group)
 --
 -- A1. Все пары соседей.
 adjacentPairs :: [a] -> [(a, a)]
-adjacentPairs = undefined
+adjacentPairs list = zip list (drop 1 list)
 -- main = print (adjacentPairs [1,2,3,4])  -- [(1,2),(2,3),(3,4)]
 -- main = print (adjacentPairs "a")  -- []
 
@@ -67,7 +67,7 @@ adjacentPairs = undefined
 --
 -- A2. Разности соседей (следующий минус текущий).
 differences :: [Int] -> [Int]
-differences = undefined
+differences list = zipWith (-) list (drop 1 list)
 -- main = print (differences [1,4,9,16])  -- [3,5,7]
 
 -- >>> ТЕОРИЯ: and
@@ -76,8 +76,10 @@ differences = undefined
 --   Отсортирован = все такие сравнения True.
 --
 -- A3. Отсортирован ли список по неубыванию?
+-- A3. Отсортирован ли список по неубыванию?
 isSorted :: [Int] -> Bool
-isSorted = undefined
+isSorted list = and (zipWith (<=) list (drop 1 list))
+
 -- main = print (isSorted [1,2,2,5])  -- True
 -- main = print (isSorted [3,1])  -- False
 -- main = print (isSorted [])  -- True
@@ -88,7 +90,7 @@ isSorted = undefined
 --
 -- A4. Сколько раз следующий элемент больше предыдущего.
 countIncreases :: [Int] -> Int
-countIncreases = undefined
+countIncreases list = length [ x | (x, y) <- zip list (drop 1 list), y > x]
 -- main = print (countIncreases [1,3,2,4,5])  -- 3
 
 -- >>> ТЕОРИЯ: zip3
@@ -98,7 +100,7 @@ countIncreases = undefined
 --
 -- A5. Все окна из трёх подряд.
 triples :: [a] -> [(a, a, a)]
-triples = undefined
+triples list = [ (a,b,c) | (a,b,c) <- zip3 list (drop 1 list) (drop 2 list)]
 -- main = print (triples [1,2,3,4])  -- [(1,2,3),(2,3,4)]
 
 ------------------------------------------------------------------------------
@@ -110,7 +112,7 @@ triples = undefined
 --
 -- B1. Сколько раз меняется знак между соседями (0 не встречается).
 countSignChanges :: [Int] -> Int
-countSignChanges = undefined
+countSignChanges list = length [ x | (x,y) <- zip list (drop 1 list), x * y < 0 ]
 -- main = print (countSignChanges [1,-2,-3,4,5,-6])  -- 3
 
 -- >>> ТЕОРИЯ: генератор по тройкам
@@ -118,7 +120,7 @@ countSignChanges = undefined
 --
 -- B2. Локальные максимумы: элементы, которые больше ОБОИХ соседей.
 localMaxima :: [Int] -> [Int]
-localMaxima = undefined
+localMaxima list = [ b | (a,b,c) <- zip3 list (drop 1 list) (drop 2 list), b > a && b > c]
 -- main = print (localMaxima [2,9,5,6,1])  -- [9,6]
 -- main = print (localMaxima [1,2,3])  -- []
 
@@ -127,7 +129,7 @@ localMaxima = undefined
 --
 -- B3. Пары (x, y), где y стоит на k позиций правее x.
 gapPairs :: Int -> [a] -> [(a, a)]
-gapPairs = undefined
+gapPairs k list = [ (x, y) | (x, y) <- zip list (drop k list) ]
 -- main = print (gapPairs 2 [1,2,3,4,5])  -- [(1,3),(2,4),(3,5)]
 
 -- >>> ТЕОРИЯ: рекурсия с образцом (x:y:rest) — подсчёт
@@ -141,7 +143,11 @@ gapPairs = undefined
 --
 -- B4. Сколько раз a стоит СРАЗУ перед b — рекурсией с образцом (x:y:rest).
 countFollowedBy :: Int -> Int -> [Int] -> Int
-countFollowedBy = undefined
+countFollowedBy a b (x:y:rest)
+    | x == a && y == b = 1 + countFollowedBy a b (y:rest)
+    | otherwise        =     countFollowedBy a b (y:rest)
+countFollowedBy _ _ _ = 0
+
 -- main = print (countFollowedBy 1 2 [1,2,1,3,1,2])  -- 2
 
 -- >>> ТЕОРИЯ: group, maximum
