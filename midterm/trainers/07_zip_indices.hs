@@ -59,7 +59,7 @@ import Data.List (nub)
 --
 -- A1. Пронумеровать элементы с 0.
 withIndex :: [a] -> [(Int, a)]
-withIndex = undefined
+withIndex l = [ (i, x) | (i, x) <- zip [1..] l]
 -- main = print (withIndex "abc")  -- [(0,'a'),(1,'b'),(2,'c')]
 
 -- >>> ТЕОРИЯ: zipWith
@@ -70,7 +70,7 @@ withIndex = undefined
 --
 -- A2. Сложить два списка поэлементно.
 addLists :: [Int] -> [Int] -> [Int]
-addLists = undefined
+addLists l1 l2 = zipWith (+) l1 l2
 -- main = print (addLists [1,2,3] [10,20,30])  -- [11,22,33]
 -- main = print (addLists [1,2,3] [10])  -- [11]
 
@@ -79,7 +79,7 @@ addLists = undefined
 --
 -- A3. Скалярное произведение.
 dotProduct :: [Int] -> [Int] -> Int
-dotProduct = undefined
+dotProduct l1 l2 = sum (zipWith (*) l1 l2)
 -- main = print (dotProduct [1,2,3] [4,5,6])  -- 32
 
 -- >>> ТЕОРИЯ: фильтр по индексу в генераторе
@@ -89,7 +89,7 @@ dotProduct = undefined
 --
 -- A4. Элементы на чётных позициях (0, 2, 4, ...).
 evenIndexed :: [a] -> [a]
-evenIndexed = undefined
+evenIndexed l = [ x | (i, x) <- zip [0..] l, even i ]
 -- main = print (evenIndexed [10,20,30,40,50])  -- [10,30,50]
 
 -- >>> ТЕОРИЯ: в ответ кладём индекс
@@ -98,7 +98,7 @@ evenIndexed = undefined
 --
 -- A5. Все позиции, на которых стоит число n.
 positionsOf :: Int -> [Int] -> [Int]
-positionsOf = undefined
+positionsOf n l = [ i | (i, x) <- zip [0..] l, x == n]
 -- main = print (positionsOf 3 [3,1,3,2])  -- [0,2]
 -- main = print (positionsOf 9 [3,1])  -- []
 
@@ -111,7 +111,7 @@ positionsOf = undefined
 --
 -- B1. Сумма элементов на нечётных позициях.
 sumOddIndices :: [Int] -> Int
-sumOddIndices = undefined
+sumOddIndices list = sum [ x | (i, x) <- zip [0..] list, odd i]
 -- main = print (sumOddIndices [1,2,3,4])  -- 6
 
 -- >>> ТЕОРИЯ: zipWith с [0..]
@@ -120,7 +120,7 @@ sumOddIndices = undefined
 --
 -- B2. Каждый элемент умножить на его индекс.
 indexMultiply :: [Int] -> [Int]
-indexMultiply = undefined
+indexMultiply list = [ x * i | (i, x) <- zip [0..] list]
 -- main = print (indexMultiply [5,5,5])  -- [0,5,10]
 
 -- >>> ТЕОРИЯ: zipWith на двух уровнях
@@ -130,7 +130,8 @@ indexMultiply = undefined
 --
 -- B3. Сложить две матрицы.
 addMatrices :: [[Int]] -> [[Int]] -> [[Int]]
-addMatrices = undefined
+addMatrices list1 list2 = zipWith (\x y -> zipWith (+) x y) list1 list2
+
 -- main = print (addMatrices [[1,2],[3,4]] [[10,20],[30,40]])  -- [[11,22],[33,44]]
 
 -- >>> ТЕОРИЯ: генератор по zip двух списков
@@ -140,7 +141,7 @@ addMatrices = undefined
 --
 -- B4. На скольких позициях списки совпадают.
 countSamePositions :: String -> String -> Int
-countSamePositions = undefined
+countSamePositions s s2 = length [ i | (i, a, b) <- zip3 [0..] s s2, a == b]
 -- main = print (countSamePositions "abcd" "abxd")  -- 3
 
 -- >>> ТЕОРИЯ: if внутри выражения генератора
@@ -150,7 +151,7 @@ countSamePositions = undefined
 --
 -- B5. Заменить элемент на позиции k.
 replaceAt :: Int -> a -> [a] -> [a]
-replaceAt = undefined
+replaceAt k el list = [ if i == k then el else x | (i,x) <- zip [0..] list]
 -- main = print (replaceAt 1 'X' "abc")  -- "aXc"
 -- main = print (replaceAt 5 'X' "abc")  -- "abc"
 
@@ -160,7 +161,7 @@ replaceAt = undefined
 --
 -- B6. Отрицательные числа заменить их индексом.
 negToIndex :: [Int] -> [Int]
-negToIndex = undefined
+negToIndex list = [ if x < 0 then i else x  | (i, x) <- zip [0..] list]
 -- main = print (negToIndex [-1,5,-3])  -- [0,5,2]
 
 -- >>> ТЕОРИЯ: пары с одинаковых позиций + фильтр
@@ -168,7 +169,7 @@ negToIndex = undefined
 --
 -- B7. Пары с одинаковых позиций, где первый элемент больше второго.
 biggerPairs :: [Int] -> [Int] -> [(Int, Int)]
-biggerPairs = undefined
+biggerPairs list1 list2 = [ (x, y) | (x, y) <- zip list1 list2, x > y ]
 -- main = print (biggerPairs [5,1,7] [3,4,7])  -- [(5,3)]
 
 -- >>> ТЕОРИЯ: !! — элемент по индексу
@@ -178,7 +179,7 @@ biggerPairs = undefined
 --
 -- B8. Сумма диагонали квадратной матрицы.
 diagonalSum :: [[Int]] -> Int
-diagonalSum = undefined
+diagonalSum list = sum [ row !! i | (i, row) <- zip [0..] list]
 -- main = print (diagonalSum [[1,2,3],[4,5,6],[7,8,9]])  -- 15
 
 ------------------------------------------------------------------------------
@@ -194,7 +195,10 @@ diagonalSum = undefined
 -- in the first list and the sum of the elements at even indices in the second list.
 -- Return these sums as a tuple.  [1,2,3,4] [5,6,7,8] -> (2+4, 5+7) = (6,12)
 indexSums :: [Int] -> [Int] -> (Int, Int)
-indexSums = undefined
+indexSums list1 list2 = (odds list1, evens list2)
+    where 
+        odds list = sum [ x | (i, x) <- zip [0..] list, odd i]
+        evens list = sum [ x | (i, x) <- zip [0..] list, even i]
 -- main = print (indexSums [1, 2, 3, 4] [5, 6, 7, 8])  -- (6,12)
 -- main = print (indexSums [3,5,6,7,8] [9,7,4,2,5])  -- (12,18)
 
@@ -205,7 +209,7 @@ indexSums = undefined
 -- with their respective positions within that list.
 -- [0, 10, 0, 0, 0] -> [0,10,2,3,4]
 zeroes2Index :: [Int] -> [Int]
-zeroes2Index = undefined
+zeroes2Index list = [ if x == 0 then i else x | (i, x) <- zip [0..] list ]
 -- main = print (zeroes2Index [0, 10, 0, 0, 0])  -- [0,10,2,3,4]
 -- main = print (zeroes2Index [0, 1, 2, 5, 2, 6, 0])  -- [0,1,2,5,2,6,6]
 -- main = print (zeroes2Index [0, 0, 0, 0, 0])  -- [0,1,2,3,4]
@@ -219,7 +223,7 @@ zeroes2Index = undefined
 -- Write a function that takes a function and a list, and applies
 -- the function to each element along with its index in the list.
 mapWithIndex :: (Int -> a -> b) -> [a] -> [b]
-mapWithIndex = undefined
+mapWithIndex fun list = zipWith fun [0..] list
 -- main = print (mapWithIndex (\i x -> show i ++ ":" ++ x) ["a", "b", "c"])  -- ["0:a","1:b","2:c"]
 -- main = print (mapWithIndex (\i x -> i + 1) [5, 10, 15])  -- [1,2,3]
 -- main = print (mapWithIndex (\i x -> (i, x)) [True, False])  -- [(0,True),(1,False)]
@@ -234,8 +238,9 @@ mapWithIndex = undefined
 -- and outputs the sum of the squared differences of corresponding elements.
 -- [[1,2],[4,5]] [[2,3],[5,6]] -> (2-1)^2 + (3-2)^2 + (5-4)^2 + (6-5)^2 = 4
 ssd :: [[Int]] -> [[Int]] -> Int
-ssd = undefined
--- main = print (ssd [[1, 2], [4, 5]] [[2, 3], [5, 6]])  -- 4
+ssd m1 m2 = sum (zipWith (\x y -> sum (zipWith (\a b -> ((b - a) * (b - a))) x y)) m1 m2)
+-- ssd m1 m2 = sum $ concat [zipWith (\a b -> (a-b)^2) x y | (x, y) <- zip m1 m2 ]
+--main = print (ssd [[1, 2], [4, 5]] [[2, 3], [5, 6]])  -- 4
 -- main = print (ssd [[0, 0], [0, 0]] [[0, 0], [0, 0]])  -- 0
 -- main = print (ssd [[1, 1], [1, 1]] [[2, 2], [2, 2]])  -- 4
 -- main = print (ssd [[-1, -2], [-3, -4]] [[1, 2], [3, 4]])  -- 120
@@ -255,7 +260,7 @@ ssd = undefined
 -- ВНИМАНИЕ: nub оставляет ПЕРВОЕ вхождение и дал бы [(2,5),(4,1)].
 -- Тест ждёт, что остаётся ПОСЛЕДНЕЕ -> reverse (nub (reverse ...)).
 absDiff :: [Int] -> [Int] -> Int -> [(Int, Int)]
-absDiff = undefined
+absDiff l1 l2 n = reverse (nub[ (x,y) | (x, y) <- zip l1 l2, abs (x - y) == n])
 -- main = print (absDiff [1..5] [5..10] 4)  -- [(1,5),(2,6),(3,7),(4,8),(5,9)]
 -- main = print (absDiff [] [] 2)  -- []
 -- main = print (absDiff [2,1,4,2] [5, 3, 1, 5] 3)  -- [(4,1),(2,5)]

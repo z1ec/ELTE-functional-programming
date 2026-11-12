@@ -72,7 +72,8 @@ import Data.List (group, inits, tails)
 --
 -- A1. Длина списка рекурсией (без length).
 myLength :: [a] -> Int
-myLength = undefined
+myLength [] = 0
+myLength (x:xs) = 1 + myLength xs
 -- main = print (myLength "hello")  -- 5
 -- main = print (myLength [])  -- 0
 
@@ -85,7 +86,9 @@ myLength = undefined
 --
 -- A2. Последний элемент. Для пустого — error "empty list".
 myLast :: [a] -> a
-myLast = undefined
+myLast [] = error "empty list"
+myLast [x] = x
+myLast (_:xs) = myLast xs
 -- main = print (myLast [1,2,3])  -- 3
 -- main = print (myLast "")  -- error: empty list
 
@@ -98,7 +101,9 @@ myLast = undefined
 --
 -- A3. Элементы на позициях 0, 2, 4, ... (образец x:_:rest).
 everyOther :: [a] -> [a]
-everyOther = undefined
+everyOther [] = []
+everyOther [x] = [x]
+everyOther (x:_:rest) = [x] ++ everyOther rest
 -- main = print (everyOther [1..7])  -- [1,3,5,7]
 -- main = print (everyOther "abcd")  -- "ac"
 
@@ -107,7 +112,9 @@ everyOther = undefined
 --
 -- A4. Поменять местами соседей попарно.
 swapPairs :: [a] -> [a]
-swapPairs = undefined
+swapPairs [] = []
+swapPairs [x] = [x]
+swapPairs (x:y:rest) = [y] ++ [x] ++ swapPairs rest
 -- main = print (swapPairs [1,2,3,4,5])  -- [2,1,4,3,5]
 
 -- >>> ТЕОРИЯ: функция-аргумент + guards в рекурсии
@@ -119,7 +126,9 @@ swapPairs = undefined
 --
 -- A5. Свой takeWhile.
 myTakeWhile :: (a -> Bool) -> [a] -> [a]
-myTakeWhile = undefined
+myTakeWhile fun (x:xs)
+    | fun x = x : myTakeWhile fun xs
+    | otherwise = []
 -- main = print (myTakeWhile even [2,4,5,6])  -- [2,4]
 
 ------------------------------------------------------------------------------
@@ -135,7 +144,9 @@ myTakeWhile = undefined
 --
 -- B1. Убрать подряд идущие повторы (оставить по одному).
 compress :: [Int] -> [Int]
-compress = undefined
+compress [] = []
+compress [x] = [x]
+compress (x:rest) = if [x] == (take 1 rest) then compress rest else [x] ++ compress rest
 -- main = print (compress [1,1,2,3,3,1])  -- [1,2,3,1]
 -- main = print (compress [])  -- []
 
@@ -150,7 +161,9 @@ compress = undefined
 --
 -- B2. Кодирование длин серий через span.
 runLength :: String -> [(Char, Int)]
-runLength = undefined
+runLength []     = []
+runLength (x:xs) = (x, 1 + length same) : runLength rest
+  where (same, rest) = span (== x) xs
 -- main = print (runLength "aaabcc")  -- [('a',3),('b',1),('c',2)]
 
 -- >>> ТЕОРИЯ: рекурсия, которая возвращает список списков
@@ -159,7 +172,8 @@ runLength = undefined
 --
 -- B3. Все непустые суффиксы рекурсией.
 suffixes :: [a] -> [[a]]
-suffixes = undefined
+suffixes [] = []
+suffixes (x:xs) = (x:xs) : suffixes xs
 -- main = print (suffixes [1,2,3])  -- [[1,2,3],[2,3],[3]]
 
 -- >>> ТЕОРИЯ: образец с конкретным символом
@@ -173,8 +187,12 @@ suffixes = undefined
 --
 -- B4. 'X' и следующий за ним символ c заменить на c c (удвоить c).
 -- Удвоенные символы больше НЕ обрабатываются. 'X' в конце остаётся.
-dupAfterX :: String -> String
-dupAfterX = undefined
+-- dupAfterX :: String -> String
+-- dupAfterX (x:xs)
+--     | [] = []
+--     | xs == 'X' = 'X'
+--     | x == 'X' = (take 1 xs) ++ (take 1 xs) ++ dupAfterX (drop 1 xs)
+--     | otherwise = x : dupAfterX xs
 -- main = print (dupAfterX "aXbc")  -- "abbc"
 -- main = print (dupAfterX "XXa")  -- "XXa"
 -- main = print (dupAfterX "abX")  -- "abX"
@@ -224,7 +242,7 @@ splitOn = undefined
 -- (В sample для "abc" написано [["a"],...] — на самом деле это ["a","ab","abc"].)
 -- Подсказка: tail (inits xs)  или  [take k xs | k <- [1..length xs]].
 prefixes :: [a] -> [[a]]
-prefixes = undefined
+prefixes xs = [ take k xs | k <- [1..length xs]]
 -- main = print (prefixes [1, 2, 3])  -- [[1],[1,2],[1,2,3]]
 -- main = print (prefixes "abc")  -- ["a","ab","abc"]
 -- main = print (prefixes [42, 43])  -- [[42],[42,43]]
@@ -241,7 +259,9 @@ prefixes = undefined
 -- (В midterm4 последний тест в sample ошибочный: [1,1,2,2,3,4,3,4] даёт
 --  [[1,1],[2,2],[3],[4],[3],[4]], а не [[1,1],[2,2],[3,3],[4,4]].)
 groupConsecutive :: [Int] -> [[Int]]
-groupConsecutive = undefined
+groupConsecutive []     = []
+groupConsecutive (x:xs) = (x : same) : groupConsecutive rest
+  where (same, rest) = span (== x) xs
 -- main = print (groupConsecutive [1, 2, 2, 3, 3, 3, 4])  -- [[1],[2,2],[3,3,3],[4]]
 -- main = print (groupConsecutive [5, 5, 5, 5])  -- [[5,5,5,5]]
 -- main = print (groupConsecutive [1, 2, 3, 4])  -- [[1],[2],[3],[4]]
@@ -264,8 +284,13 @@ groupConsecutive = undefined
 -- "Kab" = "a",  "KKa" = "K",  "KKguKabc" -> "KuKabc" -> "uabc"
 -- If there is only one character or no character after 'K', 'K' stays there.
 -- Подсказка: это B5, только съедаем ДВА символа после K.
+
 computeK :: String -> String
-computeK = undefined
+computeK [] = []
+computeK (x:xs)
+  | (x == 'K' || x == 'k') && length xs >= 2 = computeK (head xs : drop 2 xs)
+  | otherwise                                 = x : computeK xs
+
 -- main = print (computeK "Kg")  -- "Kg"
 -- main = print (computeK "Kfg")  -- "f"
 -- main = print (computeK "Kfgksa")  -- "fs"
