@@ -15,7 +15,15 @@ Example: For the number 4572 and the digit 5,
 the resulting number should be 57, as all digits smaller than 5 are removed.
 -}
 
---changeNumber :: Int -> Int -> Int
+changeNumber :: Int -> Int -> Int
+changeNumber 0 _ = 0
+changeNumber num n
+    | d >= n = changeNumber rest n * 10 + d
+    | otherwise = changeNumber rest n
+        where 
+            d = num `mod` 10
+            rest = num `div` 10
+    
 
 --main = print(changeNumber 45347 4) -- -4547
 --main  = print(changeNumber 4572 5) -- 57
@@ -28,7 +36,8 @@ all the zeroes with their respective positions within that list.
 Example: zeroes2Index [0, 10, 0, 0, 0] -> [0,10,2,3,4]
 -}
 
---zeroes2Index :: [Int] -> [Int]
+zeroes2Index :: [Int] -> [Int]
+zeroes2Index list = [ if x == 0 then i else x | (i,x) <- zip [0..] list ]
 
 --main = print (zeroes2Index [0, 10, 0, 0, 0]) -- [0,10,2,3,4]
 --main = print (zeroes2Index [0, 1, 2, 5, 2, 6, 0]) -- [0,1,2,5,2,6,6]
@@ -43,7 +52,8 @@ Example:
 groupConsecutive [1,2,2,3,3,3,4] -> [[1], [2, 2], [3, 3, 3], [4]]
 -}
 
---groupConsecutive :: [Int] -> [[Int]]
+groupConsecutive :: [Int] -> [[Int]]
+groupConsecutive list = group list
 
 --main = print(groupConsecutive [1, 2, 2, 3, 3, 3, 4])      -- [[1],[2,2],[3,3,3],[4]]
 --main = print(groupConsecutive [5, 5, 5, 5])               -- [[5,5,5,5]]
