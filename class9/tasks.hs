@@ -109,7 +109,11 @@ mirrorEven (Node x l r) = if even x then Node x (mirrorEven r) (mirrorEven l) el
 ------------------------------------------------------------------------
 
 countAtLevel :: Int -> Tree a -> Int
-countAtLevel k t = undefined
+countAtLevel _ Leaf = 0
+countAtLevel k (Node _ l r)
+  | k < 1     = 0                    
+  | k == 1    = 1                     
+  | otherwise = countAtLevel (k - 1) l + countAtLevel (k - 1) r
 
 -- main = print (countAtLevel 3 ta)  -- 4
 -- main = print (countAtLevel 3 tb)  -- 1
@@ -121,7 +125,10 @@ countAtLevel k t = undefined
 ------------------------------------------------------------------------
 
 oneChild :: Tree a -> [a]
-oneChild t = undefined
+oneChild (Node _ Leaf Leaf) = []
+oneChild (Node x _ Leaf) = [x]
+oneChild (Node x Leaf _) = [x]
+oneChild (Node _ l r) = oneChild l ++ oneChild r 
 
 -- main = print (oneChild tb)                                -- "a"
 -- main = print (oneChild ta)                                -- []
@@ -134,8 +141,13 @@ oneChild t = undefined
 -- Otherwise the value stays. (Leaf counts as 0.)
 ------------------------------------------------------------------------
 
+rootVal :: Tree Int -> Int
+rootVal Leaf = 0
+rootVal (Node x _ _) = x
+
 markNegative :: Tree Int -> Tree Int
-markNegative t = undefined
+markNegative Leaf = Leaf
+markNegative (Node x l r) = if rootVal(l) + rootVal(r) < 0 then (Node (-1) (markNegative l) (markNegative r)) else (Node x (markNegative l) (markNegative r))
 
 -- main = print (markNegative (Node 10 (Node (-5) Leaf Leaf) (Node (-3) Leaf Leaf)))                          -- Node (-1) (Node (-5) Leaf Leaf) (Node (-3) Leaf Leaf)
 -- main = print (preorder (markNegative (Node 4 (Node 2 (Node (-9) Leaf Leaf) Leaf) (Node (-3) Leaf Leaf))))  -- [-1,-1,-9,-3]
@@ -145,8 +157,17 @@ markNegative t = undefined
 -- (the sum of the even values, the sum of the odd values). The empty tree: (0, 0).
 ------------------------------------------------------------------------
 
+evenElem :: Tree Int -> Int
+evenElem Leaf = 0
+evenElem (Node x l r) = (if even x then x else 0) + evenElem l + evenElem r
+
+oddElem :: Tree Int -> Int
+oddElem Leaf = 0
+oddElem (Node x l r) = (if odd x then x else 0) + oddElem l + oddElem r
+
+
 evenOddSums :: Tree Int -> (Int, Int)
-evenOddSums t = undefined
+evenOddSums t = (evenElem t, oddElem t)
 
 -- main = print (evenOddSums ta)                                               -- (22,9)
 -- main = print (evenOddSums (Node 11 (Node 3 Leaf Leaf) (Node 7 Leaf Leaf)))  -- (0,21)
