@@ -25,7 +25,8 @@ data List a = Empty | Cons a (List a)
 ------------------------------------------------------------------------
 
 toList :: List a -> [a]
-toList xs = undefined
+toList Empty = []
+toList (Cons x xs) = x : toList xs
 
 -- main = print (toList (Cons 1 (Cons 2 (Cons 3 Empty))))  -- [1,2,3]
 -- main = print (toList (Cons 'h' (Cons 'i' Empty)))       -- "hi"
@@ -61,7 +62,11 @@ tree2 = Node 2 (Node (-5) Leaf Leaf) (Node 9 Leaf Leaf)
 ------------------------------------------------------------------------
 
 maxTree :: Tree Int -> Int
-maxTree t = undefined
+maxTree Leaf = error "Empty tree"
+maxTree (Node x Leaf Leaf) = x
+maxTree (Node x l Leaf) = max x (maxTree l)
+maxTree (Node x Leaf r) = max x (maxTree r)
+maxTree (Node x l r) = max x (max (maxTree l) (maxTree r))
 
 -- main = print (maxTree tree1)                  -- 14
 -- main = print (maxTree tree2)                  -- 9
@@ -72,7 +77,10 @@ maxTree t = undefined
 ------------------------------------------------------------------------
 
 atLeast :: Int -> Tree Int -> [Int]
-atLeast k t = undefined
+atLeast _ Leaf = []
+atLeast k (Node x l r)
+  | x >= k    = atLeast k l ++ [x] ++ atLeast k r
+  | otherwise = atLeast k l ++ atLeast k r
 
 -- main = print (atLeast 7 tree1)    -- [7,8,10,13,14]
 -- main = print (atLeast 0 tree2)    -- [2,9]
@@ -83,7 +91,8 @@ atLeast k t = undefined
 ------------------------------------------------------------------------
 
 zeroSmall :: Int -> Tree Int -> Tree Int
-zeroSmall k t = undefined
+zeroSmall _ Leaf = Leaf
+zeroSmall k (Node x l r) = if x < k then (Node 0 (zeroSmall k l) (zeroSmall k r)) else (Node x (zeroSmall k l) (zeroSmall k r))
 
 -- main = print (zeroSmall 3 tree2)                             -- Node 0 (Node 0 Leaf Leaf) (Node 9 Leaf Leaf)
 -- main = print (zeroSmall 5 (Node 3 (Node 8 Leaf Leaf) Leaf))  -- Node 0 (Node 8 Leaf Leaf) Leaf
@@ -95,7 +104,8 @@ zeroSmall k t = undefined
 ------------------------------------------------------------------------
 
 leftPath :: Tree a -> [a]
-leftPath t = undefined
+leftPath Leaf = []
+leftPath (Node x l r) = [x] ++ leftPath l
 
 -- main = print (leftPath tree1)                                 -- [8,3,1]
 -- main = print (leftPath (Node 'a' Leaf (Node 'b' Leaf Leaf)))  -- "a"
@@ -106,7 +116,10 @@ leftPath t = undefined
 ------------------------------------------------------------------------
 
 trim :: Int -> Tree a -> Tree a
-trim k t = undefined
+trim _ Leaf = Leaf
+trim k (Node x l r)
+  | k <= 0    = Leaf
+  | otherwise = Node x (trim (k - 1) l) (trim (k - 1) r)
 
 -- main = print (trim 2 tree1)  -- Node 8 (Node 3 Leaf Leaf) (Node 10 Leaf Leaf)
 -- main = print (trim 1 tree2)  -- Node 2 Leaf Leaf
@@ -116,8 +129,13 @@ trim k t = undefined
 -- 7. Every value becomes the number of values in its subtree (the node itself included).
 ------------------------------------------------------------------------
 
+size :: Tree a -> Int
+size Leaf         = 0
+size (Node _ l r) = 1 + size l + size r
+
 subtreeSizes :: Tree a -> Tree Int
-subtreeSizes t = undefined
+subtreeSizes Leaf         = Leaf
+subtreeSizes (Node _ l r) = Node (1 + size l + size r) (subtreeSizes l) (subtreeSizes r)
 
 -- main = print (subtreeSizes tree2)                                                 -- Node 3 (Node 1 Leaf Leaf) (Node 1 Leaf Leaf)
 -- main = print (subtreeSizes (Node 'a' (Node 'b' Leaf (Node 'c' Leaf Leaf)) Leaf))  -- Node 3 (Node 2 Leaf (Node 1 Leaf Leaf)) Leaf
@@ -144,7 +162,8 @@ staff = Node (Employee "Anna" 900)
 ------------------------------------------------------------------------
 
 payroll :: Tree Employee -> Int
-payroll t = undefined
+payroll Leaf = 0
+payroll (Node x l r) = salary x + (payroll l) + (payroll r)
 
 -- main = print (payroll staff)  -- 2250
 -- main = print (payroll Leaf)   -- 0
@@ -153,8 +172,12 @@ payroll t = undefined
 -- 9. Everybody's salary goes up by the given percent (round down).
 ------------------------------------------------------------------------
 
+increaseSalary :: Int -> Employee -> Employee
+increaseSalary p (Employee n s) = Employee n (s + (s * p) `div` 100)
+
 raise :: Int -> Tree Employee -> Tree Employee
-raise pct t = undefined
+raise _ Leaf = Leaf
+raise pct (Node e l r) = Node (increaseSalary pct e) (raise pct l) (raise pct r)
 
 -- main = print (raise 10 (Node (Employee "Bob" 400) Leaf Leaf))  -- Node (Employee {empName = "Bob", salary = 440}) Leaf Leaf
 -- main = print (payroll (raise 10 staff))                        -- 2475
@@ -165,7 +188,10 @@ raise pct t = undefined
 ------------------------------------------------------------------------
 
 earnMore :: Int -> Tree Employee -> [String]
-earnMore k t = undefined
+earnMore _ Leaf = []
+earnMore k (Node e l r)
+  | salary e > k = empName e : (earnMore k l ++ earnMore k r)
+  | otherwise    = earnMore k l ++ earnMore k r
 
 -- main = print (earnMore 350 staff)   -- ["Anna","Bob","Cecil"]
 -- main = print (earnMore 1000 staff)  -- []
@@ -175,7 +201,8 @@ earnMore k t = undefined
 ------------------------------------------------------------------------
 
 toPairs :: Tree Employee -> Tree (String, Int)
-toPairs t = undefined
+toPairs Leaf = Leaf
+toPairs (Node e l r) = Node (empName e, salary e) (toPairs l) (toPairs r)
 
 -- main = print (toPairs staff)                                  -- Node ("Anna",900) (Node ("Bob",400) Leaf Leaf) (Node ("Cecil",650) (Node ("Dora",300) Leaf Leaf) Leaf)
 -- main = print (toPairs (Node (Employee "Bob" 400) Leaf Leaf))  -- Node ("Bob",400) Leaf Leaf
@@ -186,7 +213,14 @@ toPairs t = undefined
 ------------------------------------------------------------------------
 
 gradeWords :: Tree Int -> Tree String
-gradeWords t = undefined
+gradeWords Leaf = Leaf
+gradeWords (Node g l r)
+  | g == 1 = Node "fail" (gradeWords l) (gradeWords r)
+  | g == 2 = Node "pass" (gradeWords l) (gradeWords r)
+  | g == 3 = Node "satisfactory" (gradeWords l) (gradeWords r)
+  | g == 4 = Node "good" (gradeWords l) (gradeWords r)
+  | g == 5 = Node "excellent" (gradeWords l) (gradeWords r)
+  | otherwise = Node "invalid" (gradeWords l) (gradeWords r)
 
 -- main = print (gradeWords (Node 5 (Node 1 Leaf Leaf) (Node 7 Leaf Leaf)))  -- Node "excellent" (Node "fail" Leaf Leaf) (Node "invalid" Leaf Leaf)
 -- main = print (gradeWords (Node 3 Leaf (Node 4 Leaf Leaf)))                -- Node "satisfactory" Leaf (Node "good" Leaf Leaf)
@@ -195,8 +229,13 @@ gradeWords t = undefined
 -- 13★ The average of the values (a Double). For the empty tree: error "Empty tree".
 ------------------------------------------------------------------------
 
+sumTree :: Tree Int -> Int
+sumTree Leaf = 0
+sumTree (Node x l r) = x + (sumTree l) + (sumTree r)
+
 averageTree :: Tree Int -> Double
-averageTree t = undefined
+averageTree Leaf = error "Empty tree"
+averageTree t = fromIntegral (sumTree t) / fromIntegral (size t)
 
 -- main = print (averageTree tree2)  -- 2.0
 -- main = print (averageTree tree1)  -- 7.333333333333333
