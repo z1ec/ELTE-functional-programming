@@ -179,7 +179,11 @@ evenOddSums t = (evenElem t, oddElem t)
 ------------------------------------------------------------------------
 
 clamp :: Tree Int -> Tree Int
-clamp t = undefined
+clamp Leaf = Leaf
+clamp (Node x l r)
+    | x < 0 = (Node 0 (clamp l) (clamp r))
+    | x > 5 = (Node 5 (clamp l) (clamp r))
+    | otherwise = (Node x (clamp l) (clamp r))
 
 -- main = print (clamp ta)             -- Node 5 (Node 2 (Node 0 Leaf Leaf) (Node 4 Leaf Leaf)) (Node 5 (Node 3 Leaf Leaf) (Node 5 Leaf Leaf))
 -- main = print (preorder (clamp ta))  -- [5,2,0,4,5,3,5]
