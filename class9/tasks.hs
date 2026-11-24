@@ -57,7 +57,8 @@ valueOf (Node x _ _) = x
 ------------------------------------------------------------------------
 
 productTree :: Tree Int -> Int
-productTree t = undefined
+productTree Leaf = 1
+productTree (Node x l r) = x * productTree(l) * productTree(r) 
 
 -- main = print (productTree (Node 2 (Node 3 Leaf Leaf) (Node 4 Leaf Leaf)))  -- 24
 -- main = print (productTree ta)                                              -- -10080
@@ -69,7 +70,9 @@ productTree t = undefined
 ------------------------------------------------------------------------
 
 rightmost :: Tree a -> a
-rightmost t = undefined
+rightmost Leaf = error "Empty tree"
+rightmost (Node x _ Leaf) = x
+rightmost (Node x _ r) = rightmost r
 
 -- main = print (rightmost ta)  -- 10
 -- main = print (rightmost tb)  -- 's'
@@ -80,7 +83,8 @@ rightmost t = undefined
 ------------------------------------------------------------------------
 
 countGreater :: Int -> Tree Int -> Int
-countGreater k t = undefined
+countGreater k Leaf = 0
+countGreater k (Node x l r) = (if x > k then 1 else 0) + countGreater k r + countGreater k l
 
 -- main = print (countGreater 3 ta)    -- 4
 -- main = print (countGreater 100 ta)  -- 0
@@ -92,7 +96,8 @@ countGreater k t = undefined
 ------------------------------------------------------------------------
 
 mirrorEven :: Tree Int -> Tree Int
-mirrorEven t = undefined
+mirrorEven Leaf = Leaf
+mirrorEven (Node x l r) = if even x then Node x (mirrorEven r) (mirrorEven l) else Node x (mirrorEven l) (mirrorEven r)
 
 -- main = print (mirrorEven (Node 2 (Node 1 Leaf Leaf) (Node 3 Leaf Leaf)))  -- Node 2 (Node 3 Leaf Leaf) (Node 1 Leaf Leaf)
 -- main = print (mirrorEven (Node 1 (Node 2 Leaf Leaf) (Node 3 Leaf Leaf)))  -- Node 1 (Node 2 Leaf Leaf) (Node 3 Leaf Leaf)
