@@ -206,7 +206,7 @@ mulAdA l1 l2 l3 = [ a * b + c | a <- l2 | b <- l3 | c <- l1]
 --   Use a parallel generator to pair up the first n numbers
 --   divisible by 3 with the ones divisible by 5.
 gen2 :: Int -> [(Int, Int)]
-gen2 n = take n [ (a,b) | a <- [3,6..] , b <- [5,10..]]
+gen2 n = take n [ (a,b) | a <- [3,6..] | b <- [5,10..]]
 -- main = print (gen2 0)  -- []
 -- main = print (gen2 3)  -- [(3,5),(6,10),(9,15)]
 -- main = print (gen2 8)  -- [(3,5),(6,10),(9,15),(12,20),(15,25),(18,30),(21,35),(24,40)]
