@@ -53,7 +53,7 @@
 -- A1. Сложи два списка поэлементно.
 --   План: одна строка — [ x + y | x <- xs | y <- ys ].
 addLists :: [Int] -> [Int] -> [Int]
-addLists = undefined
+addLists l1 l2 = [ x + y | x <- l1 | y <- l2 ]
 -- main = print (addLists [1,2,3] [10,20,30])  -- [11,22,33]
 -- main = print (addLists [5,5] [1,2,3,4])  -- [6,7]
 -- main = print (addLists [] [1,2])  -- []
@@ -70,7 +70,7 @@ addLists = undefined
 --
 -- A2. Пронумеруй буквы строки, начиная с 1.
 numbered :: String -> [(Int, Char)]
-numbered = undefined
+numbered s = [ (b, a) | a <- s | b <- [1..] ]
 -- main = print (numbered "abc")  -- [(1,'a'),(2,'b'),(3,'c')]
 -- main = print (numbered "")  -- []
 
@@ -84,7 +84,7 @@ numbered = undefined
 --
 -- A3. Склей буквы двух строк попарно в строки из двух букв.
 twoLetters :: String -> String -> [String]
-twoLetters = undefined
+twoLetters s1 s2 = [ [a, b] | a <- s1 | b <- s2 ]
 -- main = print (twoLetters "abc" "xyz")  -- ["ax","by","cz"]
 -- main = print (twoLetters "hello" "HI")  -- ["hH","eI"]
 
@@ -102,7 +102,7 @@ twoLetters = undefined
 --
 -- B1. Для каждой позиции возьми больший из двух элементов.
 maxEach :: [Int] -> [Int] -> [Int]
-maxEach = undefined
+maxEach l1 l2 = [ if a > b then a else b | a <- l1 | b <- l2 ]
 -- main = print (maxEach [1,5,3] [4,2,6])  -- [4,5,6]
 -- main = print (maxEach [-1,-2] [-3,0,9])  -- [-1,0]
 
@@ -122,7 +122,7 @@ maxEach = undefined
 --
 -- B2. Сколько позиций, на которых в двух строках стоит одна и та же буква?
 countSame :: String -> String -> Int
-countSame = undefined
+countSame s1 s2 = length (filter ( == True ) [ x == y | x <- s1 | y <- s2])
 -- main = print (countSame "abcd" "abed")  -- 3
 -- main = print (countSame "haskell" "pascal")  -- 3
 -- main = print (countSame "" "abc")  -- 0
@@ -138,7 +138,7 @@ countSame = undefined
 -- B3. Первые n кратных числа a в паре с кратными числа b.
 --   multiplesPairs 3 2 7 == [(2,7),(4,14),(6,21)]
 multiplesPairs :: Int -> Int -> Int -> [(Int, Int)]
-multiplesPairs = undefined
+multiplesPairs n a b = take n [ (a * n, b * n) | n <- [1..] ]
 -- main = print (multiplesPairs 3 2 7)  -- [(2,7),(4,14),(6,21)]
 -- main = print (multiplesPairs 0 2 7)  -- []
 -- main = print (multiplesPairs 4 10 1)  -- [(10,1),(20,2),(30,3),(40,4)]
@@ -158,7 +158,7 @@ multiplesPairs = undefined
 --   Uppercase and Lowercase letters.
 --   Example: gen1 3 = [('A','a'),('B','b'),('C','c')]
 gen1 :: Int -> [(Char, Char)]
-gen1 = undefined
+gen1 n = take n [ (a, b) | a <- ['A'..] | b <- ['a'..]]
 -- main = print (gen1 0)  -- []
 -- main = print (gen1 3)  -- [('A','a'),('B','b'),('C','c')]
 -- main = print (gen1 8)  -- [('A','a'),('B','b'),('C','c'),('D','d'),('E','e'),('F','f'),('G','g'),('H','h')]
@@ -173,7 +173,7 @@ gen1 = undefined
 --   A dot product is the sum of the products of the corresponding entries.
 --   Parallel list comprehension must be used.
 dotProd :: [Int] -> [Int] -> Int
-dotProd = undefined
+dotProd l1 l2 = sum [ a * b | a <- l1 | b <- l2 ]
 -- main = print (dotProd [1, 2, 3] [4, 5, 6])  -- 32
 -- main = print (dotProd [-1, -2, -3] [4, -5, 6])  -- -12
 -- main = print (dotProd [0, 0, 0] [1, 2, 3])  -- 0
@@ -190,7 +190,7 @@ dotProd = undefined
 --   and v3, multiply v2 and v3 then add the result to v1.
 --   Parallel list comprehension must be used.
 mulAdA :: [Int] -> [Int] -> [Int] -> [Int]
-mulAdA = undefined
+mulAdA l1 l2 l3 = [ a * b + c | a <- l2 | b <- l3 | c <- l1]
 -- main = print (mulAdA [1, 2, 3] [4, 5, 6] [7, 8, 9])  -- [29,42,57]
 -- main = print (mulAdA [1, 0, 3] [4, 0, 6] [7, 8, 0])  -- [29,0,3]
 -- main = print (mulAdA [1, -2, 3] [-4, 5, -6] [7, -8, 9])  -- [-27,-42,-51]
@@ -206,7 +206,7 @@ mulAdA = undefined
 --   Use a parallel generator to pair up the first n numbers
 --   divisible by 3 with the ones divisible by 5.
 gen2 :: Int -> [(Int, Int)]
-gen2 = undefined
+gen2 n = take n [ (a,b) | a <- [3,6..] , b <- [5,10..]]
 -- main = print (gen2 0)  -- []
 -- main = print (gen2 3)  -- [(3,5),(6,10),(9,15)]
 -- main = print (gen2 8)  -- [(3,5),(6,10),(9,15),(12,20),(15,25),(18,30),(21,35),(24,40)]
@@ -223,7 +223,7 @@ gen2 = undefined
 --   corresponding motion vector.
 --   Parallel list comprehension must be used.
 shiftPoints :: [(Int, Int)] -> [(Int, Int)] -> [(Int, Int)]
-shiftPoints = undefined
+shiftPoints l1 l2 = [ (x1 + x2 , y1 + y2) | (x1, y1) <- l1 | (x2, y2) <- l2]
 -- main = print (shiftPoints [(1, 2), (3, 4), (5, 6)] [(1, 1), (2, 2), (3, 3)])  -- [(2,3),(5,6),(8,9)]
 -- main = print (shiftPoints [(1, 2), (3, 4), (5, 6)] [(-1, -1), (-2, -2), (-3, -3)])  -- [(0,1),(1,2),(2,3)]
 -- main = print (shiftPoints [(1, 2), (3, 4), (5, 6)] [(0, 0), (0, 0), (0, 0)])  -- [(1,2),(3,4),(5,6)]
@@ -244,7 +244,7 @@ shiftPoints = undefined
 --   Traverse list1 and list2 simultaneously.
 --   Parallel list comprehension must be used.
 applyFunction :: (Int -> Int -> Int) -> [Int] -> [Int] -> [(Int, Int, Int)]
-applyFunction = undefined
+applyFunction f l1 l2 = [ (x, y, (f x y)) | x <- l1 | y <- l2 ]
 -- main = print (applyFunction (\x y -> x^2 + 2*x*y + y^2) [4,5,6] [1,2,3])  -- [(4,1,25),(5,2,49),(6,3,81)]
 -- main = print (applyFunction (\x y -> x `mod` y) [10, 25, 30] [3, 7, 9])  -- [(10,3,1),(25,7,4),(30,9,3)]
 -- main = print (applyFunction (\x y -> abs (x - y)) [8, 12, 16] [5, 10, 20])  -- [(8,5,3),(12,10,2),(16,20,4)]
@@ -264,7 +264,7 @@ applyFunction = undefined
 --   of states of the bulb over the time ("On" or "Off").
 --   Parallel list comprehension must be used.
 lightStates :: String -> String -> [String]
-lightStates = undefined
+lightStates s1 s2 = [ if a == '1' && b == '1' then "On" else "Off" | a <- s1 | b <- s2 ]
 -- main = print (lightStates "1100" "1010")  -- ["On","Off","Off","Off"]
 -- main = print (lightStates "1111" "1111")  -- ["On","On","On","On"]
 -- main = print (lightStates "0000" "1111")  -- ["Off","Off","Off","Off"]
@@ -286,7 +286,7 @@ lightStates = undefined
 --   Return the sum of all these computed values.
 --   Parallel list comprehension must be used.
 processTuples :: [(Int, Bool)] -> [(Int, Bool)] -> Int
-processTuples = undefined
+processTuples l1 l2 = sum [ if b1 && b2 then i1 + i2 else (i1 - i2) | (i1, b1) <- l1 | (i2, b2) <- l2 ]
 -- main = print (processTuples [(1, True), (2, False), (6, False)] [(3, True), (4, True), (5, False)])  -- 3
 -- main = print (processTuples [(4, True), (7, True), (1, False)] [(2, True), (5, False), (3, True)])  -- 6
 -- main = print (processTuples [(0, False), (10, True), (8, False)] [(5, False), (3, True), (2, False)])  -- 14
@@ -316,7 +316,10 @@ processTuples = undefined
 --   If the lists are of different lengths, process only up to the shorter one.
 --   Parallel list comprehension must be used.
 elementWise :: [Double] -> [Double] -> ([Double], [Double])
-elementWise = undefined
+elementWise l1 l2 = (prods, divs)
+    where 
+        prods = [ a * b | a <- l1 | b <- l2]
+        divs = [ a / b | a <- l1 | b <- l2, b /= 0]
 -- main = print (elementWise [1.0, 2.0, 3.0] [4.0, 5.0, 6.0])  -- ([4.0,10.0,18.0],[0.25,0.4,0.5])
 -- main = print (elementWise [1.0, 2.0, 3.0, 4.0] [0.0, 0.0, 0.0, 2.0, 0.0, 3.0, 4.0, 5.0, 6.0])  -- ([0.0,0.0,0.0,8.0],[0.5,0.6666666666666666,0.75,0.8])
 -- main = print (elementWise [] [1.0, 2.0, 3.0])  -- ([],[])
