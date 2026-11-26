@@ -70,7 +70,7 @@ students = [student1, student2, student3, student4, student5, student6]
 --
 -- A1. Возраст машины в году now.   carAge 2026 car1 == 11
 carAge :: Int -> Car -> Int
-carAge = undefined
+carAge y c = y - year c
 -- main = print (carAge 2026 car1)  -- 11
 -- main = print (carAge 2026 car3)  -- 27
 
@@ -84,7 +84,7 @@ carAge = undefined
 --
 -- A2. Уменьши цену машины на d.
 discount :: Int -> Car -> Car
-discount = undefined
+discount amount car = car { price = price car - amount }
 -- main = print (discount 500 car1)  -- Car {brand = "Toyota", year = 2015, price = 7500}
 -- main = print (discount 0 car3)  -- Car {brand = "Lada", year = 1999, price = 1500}
 
@@ -97,7 +97,7 @@ discount = undefined
 --
 -- A3. Имена всех студентов.
 studentNames :: [Student] -> [String]
-studentNames = undefined
+studentNames list = [ studentName s | s <- list]
 -- main = print (studentNames [student1, student3])  -- ["Alice","Charlie"]
 -- main = print (studentNames [])  -- []
 
@@ -119,7 +119,7 @@ studentNames = undefined
 -- B1. Студенты, которые учатся в университете u.
 --   (в тесте берём map studentName, чтобы ответ был коротким)
 studentsOf :: Univ -> [Student] -> [Student]
-studentsOf = undefined
+studentsOf univ list = [ s | s <- list, uni s == univ ]
 -- main = print (map studentName (studentsOf univ1 students))  -- ["Alice","Bob"]
 -- main = print (map studentName (studentsOf univ3 students))  -- ["Eve","Frank"]
 -- main = print (map studentName (studentsOf univ2 []))  -- []
@@ -134,7 +134,7 @@ studentsOf = undefined
 --
 -- B2. Есть ли у студента оценка БОЛЬШЕ k?
 hasGradeAbove :: Int -> Student -> Bool
-hasGradeAbove = undefined
+hasGradeAbove k student = if any (>k) (grades student) then True else False
 -- main = print (hasGradeAbove 90 student2)  -- True
 -- main = print (hasGradeAbove 90 student1)  -- False
 -- main = print (hasGradeAbove 50 student8)  -- True
@@ -150,7 +150,9 @@ hasGradeAbove = undefined
 --
 -- B3. Среднее списка оценок (для пустого — 0.0).
 average :: [Int] -> Double
-average = undefined
+average list
+    | length list == 0 = 0.0
+    | otherwise = fromIntegral (sum list) / fromIntegral (length list)
 -- main = print (average [85, 90, 78])  -- 84.33333333333333
 -- main = print (average [1, 2])  -- 1.5
 -- main = print (average [])  -- 0.0
@@ -169,7 +171,10 @@ average = undefined
 -- C1 (endterm1 #5). List all students who have at least one grade
 --   greater than 90. Write the names of these students.
 outstandingStudents :: [Student] -> [String]
-outstandingStudents = undefined
+outstandingStudents list = map (studentName) [ s | s <- list, gradeAbove90 s]
+
+gradeAbove90 :: Student -> Bool
+gradeAbove90 student = if any (>90) (grades student) then True else False
 -- main = print (outstandingStudents students)  -- ["Bob","David"]
 -- main = print (outstandingStudents [student1, student3])  -- []
 
@@ -185,8 +190,19 @@ outstandingStudents = undefined
 -- C2 (endterm2 #3). You are given a student, a character, and a number.
 --   If the student's name contains the given character and the university's
 --   id matches the given number, increase the student's neptunID by 100.
+
 rec1 :: Student -> Char -> Int -> Student
-rec1 = undefined
+rec1 student char int = if (charInStudent student char) && (uniIdCheck student int) then student { neptunID = neptunID student + 100 } else student
+
+charInStudent :: Student -> Char -> Bool
+charInStudent student c = if any (==c) (studentName student) then True else False
+
+uniIdCheck :: Student -> Int -> Bool
+uniIdCheck student id = if id == (getUniID (uni student)) then True else False
+
+getUniID :: Univ -> Int
+getUniID university = uniID university
+
 -- main = print (rec1 student1 'c' 1)  -- Student {neptunID = 201, studentName = "Alice", uni = Univ {uniName = "University A", uniID = 1}, grades = [85,90,78]}
 -- main = print (rec1 student1 'x' 1)  -- Student {neptunID = 101, studentName = "Alice", uni = Univ {uniName = "University A", uniID = 1}, grades = [85,90,78]}
 -- main = print (rec1 student2 'o' 2)  -- Student {neptunID = 102, studentName = "Bob", uni = Univ {uniName = "University A", uniID = 1}, grades = [88,92,80]}
@@ -207,7 +223,10 @@ rec1 = undefined
 --   course. A student fails a course if the grade is lower than 60.
 --   Return a list of student names and their failing scores.
 failingStudents :: [Student] -> [(String, [Int])]
-failingStudents = undefined
+failingStudents list = [ (studentName student, filter (<60) (grades student)) | student <- list, isFailed student ]
+
+isFailed :: Student -> Bool
+isFailed student = if any (<60) (grades student) then True else False
 -- main = print (failingStudents [student1, student2, student7, student4, student8, student6])  -- [("Charlie1",[59]),("Eve1",[9,8])]
 -- main = print (failingStudents [student1, student2, student3])  -- []
 -- main = print (failingStudents [])  -- []
@@ -222,7 +241,13 @@ failingStudents = undefined
 -- C4 (endterm2 #4, part 1). Given a list of students, determine their
 --   average grade (average of ALL their grades together).
 studentsAvg :: [Student] -> Double
-studentsAvg = undefined
+studentsAvg [] = 0.0
+studentsAvg list = fromIntegral (sum (gradesList list)) / fromIntegral (length (gradesList list))
+
+gradesList :: [Student] -> [Int]
+gradesList list = concat [ grades student | student <- list]
+
+
 -- main = print (studentsAvg [])  -- 0.0
 -- main = print (studentsAvg [student1])  -- 84.33333333333333
 -- main = print (studentsAvg [student2, student4, student5])  -- 86.55555555555556
@@ -237,8 +262,15 @@ studentsAvg = undefined
 --   filter out the students who are not enrolled at the given university.
 --   Return a tuple: (name of the university, average grade of its students).
 --   If no students are enrolled in the university, the average should be 0.0.
+
 averageGradeForUniversity :: Univ -> [Student] -> (String, Double)
-averageGradeForUniversity = undefined
+averageGradeForUniversity university [] = (uniName university, 0.0)
+averageGradeForUniversity university listOfStudents = (uniName university, average (concat [ grades student | student <- listOfStudents, uni student == university]))
+    where
+        average :: [Int] -> Double
+        average [] = 0.0
+        average list = fromIntegral (sum list) / fromIntegral (length list)
+
 -- main = print (averageGradeForUniversity univ1 [])  -- ("University A",0.0)
 -- main = print (averageGradeForUniversity univ3 [student5])  -- ("University C",83.66666666666667)
 -- main = print (averageGradeForUniversity univ1 [student5])  -- ("University A",0.0)
@@ -260,7 +292,7 @@ averageGradeForUniversity = undefined
 --   university, a new name and a list of students, update the university name
 --   for all students associated with that university.
 renameUniversity :: Univ -> String -> [Student] -> [Student]
-renameUniversity = undefined
+renameUniversity university name listOfStudents = [ if uni student == university then student {uni = (uni student) {uniName = name}} else student | student <- listOfStudents ]
 -- main = print (renameUniversity univ3 "Corvinus" [student6])  -- [Student {neptunID = 106, studentName = "Frank", uni = Univ {uniName = "Corvinus", uniID = 3}, grades = [85,89,84]}]
 -- main = print (renameUniversity univ1 "ELTE" [student1, student2, student3])  -- [Student {neptunID = 101, studentName = "Alice", uni = Univ {uniName = "ELTE", uniID = 1}, grades = [85,90,78]},Student {neptunID = 102, studentName = "Bob", uni = Univ {uniName = "ELTE", uniID = 1}, grades = [88,92,80]},Student {neptunID = 103, studentName = "Charlie", uni = Univ {uniName = "University B", uniID = 2}, grades = [75,85,82]}]
 -- main = print (renameUniversity univ2 "BME" [student3, student4, student6, student5])  -- [Student {neptunID = 103, studentName = "Charlie", uni = Univ {uniName = "BME", uniID = 2}, grades = [75,85,82]},Student {neptunID = 104, studentName = "David", uni = Univ {uniName = "BME", uniID = 2}, grades = [90,87,91]},Student {neptunID = 106, studentName = "Frank", uni = Univ {uniName = "University C", uniID = 3}, grades = [85,89,84]},Student {neptunID = 105, studentName = "Eve", uni = Univ {uniName = "University C", uniID = 3}, grades = [80,83,88]}]
